@@ -14,6 +14,7 @@ namespace Math
 
         Vector3& operator+=(Vector3 const& rhs);
         Vector3& operator-=(Vector3 const& rhs);
+        Vector3 operator-() const;
 
         float norm() const;
 

@@ -24,6 +24,11 @@ int main()
     assert (vDifference.getY() == 4);
     assert (vDifference.getZ() == 6);
 
+    Vector3 vNegative = -v1;
+    assert (vNegative.getX() == -1);
+    assert (vNegative.getY() == -2);
+    assert (vNegative.getZ() == -3);
+
     v1 += { 1, 2, 3 };
     assert (v1.getX() == 2);
     assert (v1.getY() == 4);

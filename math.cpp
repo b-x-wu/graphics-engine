@@ -63,6 +63,11 @@ Math::Vector3& Math::Vector3::operator-=(Math::Vector3 const& rhs)
     return *this;
 };
 
+Math::Vector3 Math::Vector3::operator-() const
+{
+    return { -this->getX(), -this->getY(), -this->getZ() };
+};
+
 float Math::Vector3::norm() const
 {
     return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
