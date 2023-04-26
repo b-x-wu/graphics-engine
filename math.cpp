@@ -1,6 +1,13 @@
 #include "math.h"
 #include <cmath>
 
+Math::Vector3::Vector3()
+{
+    this->x = 0;
+    this->y = 0;
+    this->z = 0;
+};
+
 Math::Vector3::Vector3(float x, float y, float z)
 {
     this->x = x;
@@ -79,6 +86,21 @@ bool Math::operator==(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
 bool Math::operator!=(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
 {
     return (lhs.getX() != rhs.getX() || lhs.getY() != rhs.getY() || lhs.getZ() != rhs.getZ());
+};
+    
+Math::Vector3 Math::operator*(float const& lhs, Math::Vector3 const& rhs)
+{
+    return { lhs * rhs.getX(), lhs * rhs.getY(), lhs * rhs.getZ() };
+};
+
+Math::Vector3 Math::operator*(Math::Vector3 const& lhs, float const& rhs)
+{
+    return { lhs.getX() * rhs, lhs.getY() * rhs, lhs.getZ() * rhs };    
+};
+
+Math::Vector3 Math::operator/(Math::Vector3 const& lhs, float const& rhs)
+{
+    return { lhs.getX() / rhs, lhs.getY() / rhs, lhs.getZ() / rhs };
 };
 
 float Math::dot(Math::Vector3 const& lhs, Math::Vector3 const& rhs)

@@ -34,9 +34,20 @@ int main()
     assert (v2.getY() == -4);
     assert (v2.getZ() == -6);
 
+    Vector3 vProduct = v1 * 2;
+    assert (vProduct.getX() == 4);
+    assert (vProduct.getY() == 8);
+    assert (vProduct.getZ() == 12);
+
+    Vector3 vQuotient = v1 / 2;
+    assert (vQuotient.getX() == 1);
+    assert (vQuotient.getY() == 2);
+    assert (vQuotient.getZ() == 3);
+
     Vector3 v1Clone = { 2, 4, 6 };
     assert (v1 == v1Clone);
     assert (v1 != v2);
+    assert ((2 * v1) == (v1 * 2));
 
     assert (dot(v1, v2) == -56);
 
