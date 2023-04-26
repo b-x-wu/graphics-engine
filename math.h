@@ -30,6 +30,12 @@ namespace Math
 
     float dot(Vector3 const& lhs, Vector3 const& rhs);
     Vector3 cross(Vector3 const& lhs, Vector3 const& rhs);
+
+    struct Ray
+    {
+        Vector3 origin;
+        Vector3 direction;
+    };
 }
 
 #endif
