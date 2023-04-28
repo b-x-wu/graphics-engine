@@ -48,6 +48,16 @@ Camera::Camera(Vector3 viewPoint, Vector3 viewingDirection, int resolutionX, int
     this->bottomBound = bottomBound;
 };
 
+int Camera::getResolutionX() const
+{
+    return this->resolutionX;
+};
+
+int Camera::getResolutionY() const
+{
+    return this->resolutionY;
+};
+
 void Camera::setOrigin(Math::Vector3 origin)
 {
     this->viewPoint = origin;

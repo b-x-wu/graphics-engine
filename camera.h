@@ -12,6 +12,9 @@ public:
     // places camera at viewPoint and orients it facing the viewing direction with v pointing up
     Camera(Math::Vector3 viewPoint, Math::Vector3 viewingDirection, int resolutionX, int resolutionY, float leftBound, float rightBound, float topBound, float bottomBound);
 
+    int getResolutionX() const;
+    int getResolutionY() const;
+
     void setOrigin(Math::Vector3 origin);
     void setResolution(int resolutionX, int resolutionY);
     void setOrientation(Math::Vector3 u, Math::Vector3 v, Math::Vector3 w);
