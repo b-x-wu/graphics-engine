@@ -1,11 +1,15 @@
 #include <iostream>
 #include <assert.h>
 #include <cmath>
+#include <memory>
+
 #include "math.h"
+#include "camera.h"
+#include "scene.h"
 
 using namespace Math;
 
-int main()
+int testMath()
 {
     Vector3 v1 = { 1, 2, 3 };
     assert (v1.getX() == 1);
@@ -60,5 +64,16 @@ int main()
     assert (cross(v1, v2) == vCross);
 
     std::cout << "All tests passed.";
+    return 0;
+}
+
+int main()
+{
+    // testMath();
+
+    GrayscaleScene grayscaleScene = GrayscaleScene();
+    grayscaleScene.render();
+    grayscaleScene.exportToFile("test_render.bmp");
+
     return 0;
 }
