@@ -121,3 +121,22 @@ Math::Vector3 Math::cross(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
 
     return { x, y, z };
 }
+
+Math::Box::Box()
+{
+    this->min = { 0, 0, 0 };
+    this->max = { 0, 0, 0 };
+}
+
+Math::Box::Box(Math::Vector3 u, Math::Vector3 v)
+{
+    this->min = { std::min(u.getX(), v.getX()), std::min(u.getY(), v.getY()), std::min(u.getZ(), v.getZ()) };
+    this->max = { std::max(u.getX(), v.getX()), std::max(u.getY(), v.getY()), std::max(u.getZ(), v.getZ()) };
+}
+
+bool Math::Box::isInside(Math::Vector3 p) const
+{
+    if (p.getX() <= this->min.getX() || p.getX() >= this->max.getX()) { return false; };
+    if (p.getY() <= this->min.getY() || p.getY() >= this->max.getY()) { return false; };
+    return p.getZ() > this->min.getZ() && p.getZ() < this->max.getZ();
+}

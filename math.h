@@ -41,6 +41,18 @@ namespace Math
         Vector3 origin;
         Vector3 direction;
     };
+
+    // axis aligned box
+    class Box
+    {
+    public:
+        Vector3 min, max; // the vectors containing all min values and all max values respectively
+
+        Box(); // create the degenerate box that has min and max set to the origin
+        Box(Vector3 u, Vector3 v);
+
+        bool isInside(Vector3 p) const; // not edge inclusive
+    };
 }
 
 #endif

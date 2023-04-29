@@ -63,17 +63,27 @@ int testMath()
     Vector3 vCross = { 0, 0, 0 };
     assert (cross(v1, v2) == vCross);
 
+    Box box = Box({ -1, 1, -1 }, { 1, -1, 1 });
+    assert (box.min.getX() == -1);
+    assert (box.min.getY() == -1);
+    assert (box.min.getZ() == -1);
+    assert (box.max.getX() == 1);
+    assert (box.max.getY() == 1);
+    assert (box.max.getZ() == 1);
+    assert (box.isInside({ 0, 0, 0 }));
+    assert (!box.isInside({ 10, 10, 10 }));
+
     std::cout << "All tests passed.";
     return 0;
 }
 
 int main()
 {
-    // testMath();
+    testMath();
 
-    GrayscaleScene grayscaleScene = GrayscaleScene();
-    grayscaleScene.render();
-    grayscaleScene.exportToFile("test_render.bmp");
+    // GrayscaleScene grayscaleScene = GrayscaleScene();
+    // grayscaleScene.render();
+    // grayscaleScene.exportToFile("test_render.bmp");
 
     return 0;
 }
