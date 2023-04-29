@@ -7,6 +7,7 @@ namespace Math
     {
     public:
         Vector3();
+        Vector3(Vector3 const& v);
         Vector3(float x, float y, float z);
         float getX() const;
         float getY() const;

@@ -8,6 +8,13 @@ Math::Vector3::Vector3()
     this->z = 0;
 };
 
+Math::Vector3::Vector3(Vector3 const& v)
+{
+    this->x = v.x;
+    this->y = v.y;
+    this->z = v.z;
+}
+
 Math::Vector3::Vector3(float x, float y, float z)
 {
     this->x = x;
