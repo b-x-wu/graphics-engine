@@ -1,5 +1,6 @@
 #include "math.h"
 #include <cmath>
+#include <ostream>
 
 Math::Vector3::Vector3()
 {
@@ -114,6 +115,11 @@ Math::Vector3 Math::operator/(Math::Vector3 const& lhs, float const& rhs)
 {
     return { lhs.getX() / rhs, lhs.getY() / rhs, lhs.getZ() / rhs };
 };
+
+std::ostream& Math::operator<<(std::ostream &strm, const Math::Vector3 &v)
+{
+    return strm << "x: " << v.getX() << " y: " << v.getY() << " z: " << v.getZ();
+}
 
 float Math::dot(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
 {

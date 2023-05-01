@@ -1,6 +1,8 @@
 #ifndef MATH_HEADER
 #define MATH_HEADER
 
+#include <ostream>
+
 namespace Math
 {
     class Vector3
@@ -33,6 +35,7 @@ namespace Math
     Vector3 operator*(float const& lhs, Vector3 const& rhs);
     Vector3 operator*(Vector3 const& lhs, float const& rhs);
     Vector3 operator/(Vector3 const& lhs, float const& rhs);
+    std::ostream& operator<<(std::ostream &strm, const Vector3 &v);
 
     float dot(Vector3 const& lhs, Vector3 const& rhs);
     Vector3 cross(Vector3 const& lhs, Vector3 const& rhs);
