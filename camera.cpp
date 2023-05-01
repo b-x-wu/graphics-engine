@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "math.h"
+#include <iostream>
 #include <assert.h>
 
 using namespace Math;
@@ -71,9 +72,9 @@ void Camera::setResolution(int resolutionX, int resolutionY)
 
 void Camera::setOrientation(Math::Vector3 u, Math::Vector3 v, Math::Vector3 w)
 {
-    this->u = u;
-    this->v = v;
-    this->w = w;
+    this->u = Math::Vector3(u);
+    this->v = Math::Vector3(v);
+    this->w = Math::Vector3(w);
 };
 
 void Camera::setOrientation(Math::Vector3 viewingDirection)
