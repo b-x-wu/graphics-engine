@@ -1,14 +1,17 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 #include "scene.h"
 #include "camera.h"
+#include "surface.h"
 
 // https://stackoverflow.com/a/47785639/21190150
 
 const int BYTES_PER_PIXEL = 3;
 const int FILE_HEADER_SIZE = 14;
 const int INFO_HEADER_SIZE = 40;
+const float RENDER_DISTANCE = 300;
 
 Scene::Scene()
 {
@@ -24,6 +27,11 @@ void Scene::setCamera(std::unique_ptr<Camera> camera)
 {
     this->camera = std::move(camera);
 };
+
+void Scene::setSurface(std::unique_ptr<Surface> surface)
+{
+    this->surface = std::move(surface);
+}
 
 void Scene::exportToFile(std::string filename) const
 {
@@ -76,6 +84,7 @@ void Scene::exportToFile(std::string filename) const
     }
 
     file.close();
+    std::cout << "File written out successfully." << std::endl;
 }
 
 GrayscaleScene::GrayscaleScene()
@@ -101,7 +110,9 @@ void GrayscaleScene::setCamera(std::unique_ptr<Camera> camera)
 
 uint8_t GrayscaleScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const
 {
-    // TODO: once surfaces are calculated, change this
+    std::unique_ptr<HitRecord> hitRecord = std::unique_ptr<HitRecord>(new HitRecord);
+    const bool isHit = this->surface->hit(this->camera->computeViewingRay(pixelIndexX, pixelIndexY), 0, RENDER_DISTANCE, hitRecord);
+    if (isHit) { return 0; };
     return 255;
 }
 

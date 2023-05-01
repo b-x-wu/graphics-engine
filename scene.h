@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "camera.h"
+#include "surface.h"
 
 class Scene
 {
@@ -12,13 +13,14 @@ public:
     Scene(std::unique_ptr<Camera> camera);
 
     void setCamera(std::unique_ptr<Camera>);
+    void setSurface(std::unique_ptr<Surface>);
 
     virtual void render() = 0;
     virtual std::string computePixelArray() const = 0;
     void exportToFile(std::string filename) const;
 
 protected:
-    // Surface surfaces;
+    std::unique_ptr<Surface> surface;
     std::unique_ptr<Camera> camera;
 };
 

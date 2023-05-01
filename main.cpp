@@ -6,6 +6,7 @@
 #include "math.h"
 #include "camera.h"
 #include "scene.h"
+#include "surface.h"
 
 using namespace Math;
 
@@ -79,11 +80,20 @@ int testMath()
 
 int main()
 {
-    testMath();
+    // testMath();
 
-    // GrayscaleScene grayscaleScene = GrayscaleScene();
-    // grayscaleScene.render();
-    // grayscaleScene.exportToFile("test_render.bmp");
+    GrayscaleScene grayscaleScene = GrayscaleScene();
+    std::unique_ptr<Sphere> sphere(new Sphere(1, { 5, 0, 0 }));
+    std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
+    camera->setFocalLength(1);
+    camera->setOrigin({ -2, 0, 0 });
+    camera->setOrientation({ 1, 0, 0 });
+    camera->setResolution(640, 360);
+    camera->setBounds(-2, 2, 2, -2);
+    grayscaleScene.setCamera(std::move(camera));
+    grayscaleScene.setSurface(std::move(sphere));
+    grayscaleScene.render();
+    grayscaleScene.exportToFile("test_render.bmp");
 
     return 0;
 }
