@@ -3,6 +3,7 @@
 
 #include "math.h"
 #include <memory>
+#include <vector>
 
 struct HitRecord
 {
@@ -35,6 +36,24 @@ public:
 private:
     float radius;
     Math::Vector3 center;
+};
+
+class Triangle: public Surface
+{
+public:
+    Triangle();
+    // let vertex1, vertex2, and vertex3 be in counterclockwise order
+    Triangle(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::Vector3 vertex3);
+
+    std::vector<Math::Vector3> getVertices() const;
+    Math::Vector3 getUnitNormal() const;
+
+    void setVertices(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::Vector3 vertex3);
+
+    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const;
+    Math::Box boundingBox() const;
+private:
+    Math::Vector3 vertex1, vertex2, vertex3;
 };
 
 
