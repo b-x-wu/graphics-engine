@@ -57,6 +57,7 @@ bool Sphere::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> &
         hitRecord->intersectionTime = t;
         const Math::Vector3 p = ray.origin + t * ray.direction;
         hitRecord->unitNormal = (p - this->center) / this->radius;
+        hitRecord->intersectionPoint = p;
         return true;
     }
 
@@ -70,6 +71,7 @@ bool Sphere::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> &
     hitRecord->intersectionTime = t;
     const Math::Vector3 p = ray.origin + t * ray.direction;
     hitRecord->unitNormal = (p - this->center) / this->radius;
+    hitRecord->intersectionPoint = p;
     return true;
 };
 
@@ -150,6 +152,7 @@ bool Triangle::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord>
 
     hitRecord->intersectionTime = t;
     hitRecord->unitNormal = Math::Vector3(this->getUnitNormal());
+    hitRecord->intersectionPoint = ray.origin + t * ray.direction;
     return true;
 }
 
@@ -204,6 +207,7 @@ bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRec
             tMax = surfaceHitRecord->intersectionTime;
             hitRecord->intersectionTime = surfaceHitRecord->intersectionTime;
             hitRecord->unitNormal = surfaceHitRecord->unitNormal;
+            hitRecord->intersectionPoint = surfaceHitRecord->intersectionPoint;
         }
     }
     return groupHit;
