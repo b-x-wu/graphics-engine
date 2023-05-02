@@ -91,7 +91,7 @@ int main()
     std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     camera->setOrigin({ 0, 0, 0 });
     camera->setOrientation({ 1, 0, 0 });
-    camera->setResolution(640, 360);
+    camera->setResolution(1920, 1080);
     camera->setBounds(-16, 16, 9, -9);
     grayscaleScene.setCamera(std::move(camera));
     grayscaleScene.setSurface(std::move(groupSurface));
