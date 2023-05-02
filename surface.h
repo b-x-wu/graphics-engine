@@ -56,5 +56,19 @@ private:
     Math::Vector3 vertex1, vertex2, vertex3;
 };
 
+class GroupSurface: public Surface
+{
+public:
+    GroupSurface();
+
+    void addSurface(std::unique_ptr<Surface> surface);
+
+    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const;
+    Math::Box boundingBox() const;
+private:
+    std::vector<std::unique_ptr<Surface>> surfaces;
+    Math::Vector3 minBound, maxBound;
+};
+
 
 #endif

@@ -83,16 +83,18 @@ int main()
     // testMath();
 
     GrayscaleScene grayscaleScene = GrayscaleScene();
-    // std::unique_ptr<Sphere> sphere(new Sphere(20, { 30, 0, 0 }));
-    std::unique_ptr<Triangle> triangle(new Triangle({ 10, 10, 10 }, { 10, -10, 10 }, { 10, 10, -10 }));
+    std::unique_ptr<Sphere> sphere(new Sphere(2, { 8, 5, 5 }));
+    std::unique_ptr<Triangle> triangle(new Triangle({ 10, 2, 4 }, { 10, -2, 4 }, { 10, 2, -4 }));
+    std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
+    groupSurface->addSurface(std::move(triangle));
+    groupSurface->addSurface(std::move(sphere));
     std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     camera->setOrigin({ 0, 0, 0 });
     camera->setOrientation({ 1, 0, 0 });
     camera->setResolution(640, 360);
-    camera->setBounds(-320, 320, 180, -180);
+    camera->setBounds(-16, 16, 9, -9);
     grayscaleScene.setCamera(std::move(camera));
-    // grayscaleScene.setSurface(std::move(sphere));
-    grayscaleScene.setSurface(std::move(triangle));
+    grayscaleScene.setSurface(std::move(groupSurface));
     grayscaleScene.render();
     grayscaleScene.exportToFile("test_render.bmp");
 

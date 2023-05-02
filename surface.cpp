@@ -147,7 +147,7 @@ bool Triangle::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord>
 
     const float beta = (j * eiMinusHf + k * gfMinusDi + l * dhMinusEg) / M;
     if (beta < 0 || beta > 1 - gamma) { return false; }
-    
+
     hitRecord->intersectionTime = t;
     hitRecord->unitNormal = Math::Vector3(this->getUnitNormal());
     return true;
@@ -165,4 +165,52 @@ Math::Box Triangle::boundingBox() const
     float maxZ = std::max({ this->vertex1.getZ(), this->vertex2.getZ(), this->vertex3.getZ() });
 
     return Math::Box({ minX, minY, minZ }, { maxX, maxY, maxZ });
+}
+
+GroupSurface::GroupSurface()
+{
+    this->surfaces = std::vector<std::unique_ptr<Surface>>();
+    this->minBound = { 0, 0, 0 };
+    this->maxBound = { 0, 0, 0 };
+}
+
+void GroupSurface::addSurface(std::unique_ptr<Surface> surface)
+{
+    this->minBound = {
+        std::min(this->minBound.getX(), surface->boundingBox().min.getX()),
+        std::min(this->minBound.getY(), surface->boundingBox().min.getY()),
+        std::min(this->minBound.getZ(), surface->boundingBox().min.getZ())
+    };
+    this->maxBound = {
+        std::max(this->maxBound.getX(), surface->boundingBox().max.getX()),
+        std::max(this->maxBound.getY(), surface->boundingBox().max.getY()),
+        std::max(this->maxBound.getZ(), surface->boundingBox().max.getZ())
+    };
+    this->surfaces.push_back(std::move(surface));
+}
+
+bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const
+{
+    bool groupHit = false;
+    bool surfaceHit;
+    float tMax = t1;
+    std::unique_ptr<HitRecord> surfaceHitRecord = std::unique_ptr<HitRecord>(new HitRecord);
+    for (auto & surface : this->surfaces)
+    {
+        surfaceHit = surface->hit(ray, t0, t1, surfaceHitRecord);
+        if (surfaceHit && surfaceHitRecord->intersectionTime >= t0 && surfaceHitRecord->intersectionTime <= tMax)
+        {
+            groupHit = true;
+            tMax = surfaceHitRecord->intersectionTime;
+            hitRecord->intersectionTime = surfaceHitRecord->intersectionTime;
+            hitRecord->unitNormal = surfaceHitRecord->unitNormal;
+        }
+    }
+    return groupHit;
+}
+
+
+Math::Box GroupSurface::boundingBox() const
+{
+    return Math::Box(this->minBound, this->maxBound);
 }
