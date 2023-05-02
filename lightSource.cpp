@@ -1,28 +1,23 @@
 #include "lightSource.h"
 #include "math.h"
+#include "util.h"
 
 LightSource::LightSource()
 {
     this->intensity = 0;
-    this->red = 0;
-    this->green = 0;
-    this->blue = 0;
+    this->color = { 0, 0, 0 };
 }
 
 LightSource::LightSource(float intensity)
 {
     this->intensity = intensity;
-    this->red = 0;
-    this->green = 0;
-    this->blue = 0;
+    this->color = { 0, 0, 0 };
 }
 
-LightSource::LightSource(float intensity, uint8_t red, uint8_t green, uint8_t blue)
+LightSource::LightSource(float intensity, Util::Color color)
 {
     this->intensity = intensity;
-    this->red = red;
-    this->green = green;
-    this->blue = blue;
+    this->color = color;
 }
 
 float LightSource::getIntensity() const
@@ -51,8 +46,8 @@ UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, fl
     this->direction = direction;
 }
 
-UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, float intensity, uint8_t red, uint8_t green, uint8_t blue)
-    : LightSource::LightSource(intensity, red, green, blue)
+UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, float intensity, Util::Color color)
+    : LightSource::LightSource(intensity, color)
 {
     this->direction = direction;
 }
@@ -88,8 +83,8 @@ PointLightSource::PointLightSource(Math::Vector3 point, float intensity)
     this->point = point;
 }
 
-PointLightSource::PointLightSource(Math::Vector3 point, float intensity, uint8_t red, uint8_t green, uint8_t blue)
-    : LightSource::LightSource(intensity, red, green, blue)
+PointLightSource::PointLightSource(Math::Vector3 point, float intensity, Util::Color color)
+    : LightSource::LightSource(intensity, color)
 {
     this->point = point;
 }

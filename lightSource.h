@@ -3,13 +3,14 @@
 
 #include <stdint.h>
 #include "math.h"
+#include "util.h"
 
 class LightSource
 {
 public:
     LightSource();
     LightSource(float intensity);
-    LightSource(float intensity, uint8_t red, uint8_t green, uint8_t blue);
+    LightSource(float intensity, Util::Color color);
 
     float getIntensity() const;
 
@@ -18,7 +19,7 @@ public:
     virtual Math::Vector3 getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const = 0;
 private:
     float intensity;
-    uint8_t red, green, blue;
+    Util::Color color;
 };
 
 class UnidirectionalLightSource : public LightSource
@@ -27,7 +28,7 @@ public:
     UnidirectionalLightSource();
     UnidirectionalLightSource(Math::Vector3 direction);
     UnidirectionalLightSource(Math::Vector3 direction, float intensity);
-    UnidirectionalLightSource(Math::Vector3 direction, float intensity, uint8_t red, uint8_t green, uint8_t blue);
+    UnidirectionalLightSource(Math::Vector3 direction, float intensity, Util::Color color);
 
     Math::Vector3 getDirection() const;
 
@@ -44,7 +45,7 @@ public:
     PointLightSource();
     PointLightSource(Math::Vector3 point);
     PointLightSource(Math::Vector3 point, float intensity);
-    PointLightSource(Math::Vector3 point, float intensity, uint8_t red, uint8_t green, uint8_t blue);
+    PointLightSource(Math::Vector3 point, float intensity, Util::Color color);
 
     Math::Vector3 getPoint() const;
 
