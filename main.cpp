@@ -87,7 +87,7 @@ int main()
     GrayscaleScene grayscaleScene = GrayscaleScene();
 
     std::unique_ptr<Sphere> sphere(new Sphere(2, { 8, 5, 5 }));
-    std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 12, 2, 4 }, { 10, 2, -4 }));
+    std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 20, 2, 4 }, { 10, 2, -4 }));
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
     groupSurface->addSurface(std::move(triangle));
     groupSurface->addSurface(std::move(sphere));
@@ -97,11 +97,11 @@ int main()
     std::unique_ptr<StandardShaderMaterial> material(new StandardShaderMaterial(0.1, { 255, 255, 255 }, 50, { 255, 255, 255 }, { 255, 255, 255 }));
     groupSurface->setMaterial(std::move(material));
 
-    std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
-    camera->setOrigin({ 0, 0, 0 });
-    // std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
-    // camera->setOrigin({ -10, 0, 0 });
-    // camera->setFocalLength(10);
+    // std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
+    // camera->setOrigin({ 0, 0, 0 });
+    std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
+    camera->setOrigin({ -10, 0, 0 });
+    camera->setFocalLength(10);
     camera->setOrientation({ 1, 0, 0 });
     camera->setResolution(1920, 1080);
     camera->setBounds(-16, 16, 9, -9);

@@ -40,13 +40,14 @@ public:
     void initializeBitmap();
 
     void setCamera(std::unique_ptr<Camera> camera);
+    void setBackgroundColor(uint8_t backgroundColor);
 
     void render(); // updates the bitmap. note bitmap(0,0) is at the bottom left of the frame
     std::string computePixelArray() const;
 
 private:
     std::vector<std::vector<uint8_t>> bitmap;
-
+    uint8_t backgroundColor = 0;
     uint8_t computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const;
 };
 
