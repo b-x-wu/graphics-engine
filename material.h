@@ -10,7 +10,8 @@ class Material
 {
 public:
     virtual Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources,
-                                     std::unique_ptr<Util::HitRecord> hitRecord) const = 0;
+                                     std::unique_ptr<Util::HitRecord> hitRecord,
+                                     Math::Vector3 viewDirection) const = 0;
 };
 
 class StaticColorMaterial : public Material
@@ -23,7 +24,7 @@ public:
 
     void setSurfaceColor(Util::Color color);
 
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord) const;
+    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
 protected:
     Util::Color surfaceColor;
 };
@@ -34,7 +35,27 @@ public:
     LambertShaderMaterial();
     LambertShaderMaterial(Util::Color surfaceColor);
 
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord) const;
+    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+};
+
+class BlinnPhongShaderMaterial : public Material
+{
+public:
+    BlinnPhongShaderMaterial();
+    BlinnPhongShaderMaterial(float phongExponent);
+    BlinnPhongShaderMaterial(Util::Color specularColor);
+    BlinnPhongShaderMaterial(float phongExponent, Util::Color specularColor);
+
+    float getPhongExponent() const;
+    Util::Color getSpecularColor() const;
+
+    void setPhongExponent(float phongExponent);
+    void setSpecularColor(Util::Color specularColor);
+
+    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+private:
+    Util::Color specularColor;
+    float phongExponent;
 };
 
 #endif
