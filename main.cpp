@@ -7,6 +7,8 @@
 #include "camera.h"
 #include "scene.h"
 #include "surface.h"
+#include "material.h"
+#include "lightSource.h"
 
 using namespace Math;
 
@@ -83,16 +85,26 @@ int main()
     // testMath();
 
     GrayscaleScene grayscaleScene = GrayscaleScene();
+
     std::unique_ptr<Sphere> sphere(new Sphere(2, { 8, 5, 5 }));
-    std::unique_ptr<Triangle> triangle(new Triangle({ 10, 2, 4 }, { 10, -2, 4 }, { 10, 2, -4 }));
+    std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 12, 2, 4 }, { 10, 2, -4 }));
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
     groupSurface->addSurface(std::move(triangle));
     groupSurface->addSurface(std::move(sphere));
+
+    std::unique_ptr<LambertShaderMaterial> material(new LambertShaderMaterial({ 255, 255, 255 }));
+    groupSurface->setMaterial(std::move(material));
+
     std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     camera->setOrigin({ 0, 0, 0 });
     camera->setOrientation({ 1, 0, 0 });
     camera->setResolution(1920, 1080);
     camera->setBounds(-16, 16, 9, -9);
+
+    std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
+    lightSource->setIntensity(1);
+
+    grayscaleScene.addLightSource(std::move(lightSource));
     grayscaleScene.setCamera(std::move(camera));
     grayscaleScene.setSurface(std::move(groupSurface));
     grayscaleScene.render();

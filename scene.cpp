@@ -16,11 +16,13 @@ const float RENDER_DISTANCE = 300;
 Scene::Scene()
 {
     this->camera = std::unique_ptr<Camera>(new ParallelOrthographicCamera());
+    this->lightSources = std::vector<std::unique_ptr<LightSource>>();
 }
 
 Scene::Scene(std::unique_ptr<Camera> camera)
 {
     this->camera = std::move(camera);
+    this->lightSources = std::vector<std::unique_ptr<LightSource>>();
 };
 
 void Scene::setCamera(std::unique_ptr<Camera> camera)
@@ -31,6 +33,11 @@ void Scene::setCamera(std::unique_ptr<Camera> camera)
 void Scene::setSurface(std::unique_ptr<Surface> surface)
 {
     this->surface = std::move(surface);
+}
+
+void Scene::addLightSource(std::unique_ptr<LightSource> lightSource)
+{
+    this->lightSources.push_back(std::move(lightSource));
 }
 
 void Scene::exportToFile(std::string filename) const
@@ -87,6 +94,11 @@ void Scene::exportToFile(std::string filename) const
     std::cout << "File written out successfully." << std::endl;
 }
 
+uint8_t GrayscaleScene::colorToGrayscale(Util::Color color)
+{
+    return (uint8_t) std::floor(((int) color.red + (int) color.green + (int) color.blue) / 3);
+}
+
 GrayscaleScene::GrayscaleScene()
 {
     this->initializeBitmap();
@@ -110,10 +122,12 @@ void GrayscaleScene::setCamera(std::unique_ptr<Camera> camera)
 
 uint8_t GrayscaleScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const
 {
-    std::unique_ptr<HitRecord> hitRecord = std::unique_ptr<HitRecord>(new HitRecord);
+    std::unique_ptr<Util::HitRecord> hitRecord = std::unique_ptr<Util::HitRecord>(new Util::HitRecord);
     const bool isHit = this->surface->hit(this->camera->computeViewingRay(pixelIndexX, pixelIndexY), 0, RENDER_DISTANCE, hitRecord);
-    if (isHit) { return 0; };
-    return 255;
+    if (!isHit) { return 255; }; // TODO: change this to a settable background color
+    
+    const Util::Color pixelColor = this->surface->material->computeColor(this->lightSources, std::move(hitRecord));
+    return GrayscaleScene::colorToGrayscale(pixelColor);
 }
 
 void GrayscaleScene::render()

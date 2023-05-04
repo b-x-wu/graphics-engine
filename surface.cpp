@@ -1,5 +1,7 @@
 #include <cmath>
 #include "surface.h"
+#include "util.h"
+#include "material.h"
 #include <iostream>
 #include <algorithm>
 
@@ -41,7 +43,7 @@ void Sphere::setCenter(Math::Vector3 center)
     this->center = Math::Vector3(center);
 };
 
-bool Sphere::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const
+bool Sphere::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const
 {
     float discriminant = std::pow((Math::dot(ray.direction, ray.origin - this->center)), 2) -
                             (Math::dot(ray.direction, ray.direction)) *
@@ -118,7 +120,7 @@ void Triangle::setVertices(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::V
     this->vertex3 = vertex3;
 }
 
-bool Triangle::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const
+bool Triangle::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const
 {
     const float a = this->vertex1.getX() - this->vertex2.getX();
     const float b = this->vertex1.getY() - this->vertex2.getY();
@@ -192,12 +194,12 @@ void GroupSurface::addSurface(std::unique_ptr<Surface> surface)
     this->surfaces.push_back(std::move(surface));
 }
 
-bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const
+bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const
 {
     bool groupHit = false;
     bool surfaceHit;
     float tMax = t1;
-    std::unique_ptr<HitRecord> surfaceHitRecord = std::unique_ptr<HitRecord>(new HitRecord);
+    std::unique_ptr<Util::HitRecord> surfaceHitRecord = std::unique_ptr<Util::HitRecord>(new Util::HitRecord);
     for (auto & surface : this->surfaces)
     {
         surfaceHit = surface->hit(ray, t0, t1, surfaceHitRecord);
@@ -217,4 +219,9 @@ bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRec
 Math::Box GroupSurface::boundingBox() const
 {
     return Math::Box(this->minBound, this->maxBound);
+}
+
+void Surface::setMaterial(std::unique_ptr<Material> material)
+{
+    this->material = std::move(material);
 }

@@ -3,8 +3,11 @@
 
 #include <string>
 #include <vector>
+#include "util.h"
 #include "camera.h"
 #include "surface.h"
+#include "material.h"
+#include "lightSource.h"
 
 class Scene
 {
@@ -14,6 +17,7 @@ public:
 
     void setCamera(std::unique_ptr<Camera>);
     void setSurface(std::unique_ptr<Surface>);
+    void addLightSource(std::unique_ptr<LightSource> lightSource);
 
     virtual void render() = 0;
     virtual std::string computePixelArray() const = 0;
@@ -22,11 +26,14 @@ public:
 protected:
     std::unique_ptr<Surface> surface;
     std::unique_ptr<Camera> camera;
+    std::vector<std::unique_ptr<LightSource>> lightSources;
 };
 
 class GrayscaleScene: public Scene
 {
 public:
+    static uint8_t colorToGrayscale(Util::Color color);
+
     GrayscaleScene();
     GrayscaleScene(std::unique_ptr<Camera> camera);
 

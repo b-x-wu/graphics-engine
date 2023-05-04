@@ -2,21 +2,20 @@
 #define SURFACE_HEADER
 
 #include "math.h"
+#include "material.h"
+#include "util.h"
 #include <memory>
 #include <vector>
-
-struct HitRecord
-{
-    float intersectionTime;
-    Math::Vector3 unitNormal;
-    Math::Vector3 intersectionPoint;
-};
 
 class Surface
 {
 public:
-    virtual bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const = 0;
+    void setMaterial(std::unique_ptr<Material> material);
+
+    virtual bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const = 0;
     virtual Math::Box boundingBox() const = 0;
+    
+    std::unique_ptr<Material> material;
 };
 
 class Sphere: public Surface
@@ -32,7 +31,7 @@ public:
     void setRadius(float radius);
     void setCenter(Math::Vector3 center);
 
-    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const;
+    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:
     float radius;
@@ -51,7 +50,7 @@ public:
 
     void setVertices(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::Vector3 vertex3);
 
-    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const;
+    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:
     Math::Vector3 vertex1, vertex2, vertex3;
@@ -64,7 +63,7 @@ public:
 
     void addSurface(std::unique_ptr<Surface> surface);
 
-    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<HitRecord> & hitRecord) const;
+    bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:
     std::vector<std::unique_ptr<Surface>> surfaces;
