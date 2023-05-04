@@ -12,10 +12,12 @@ class Surface
 public:
     void setMaterial(std::unique_ptr<Material> material);
 
+    virtual Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+
     virtual bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const = 0;
     virtual Math::Box boundingBox() const = 0;
-    
-    std::unique_ptr<Material> material;
+
+    std::unique_ptr<Material> material = NULL;
 };
 
 class Sphere: public Surface
@@ -63,6 +65,8 @@ public:
 
     void addSurface(std::unique_ptr<Surface> surface);
 
+    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+    
     bool hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:

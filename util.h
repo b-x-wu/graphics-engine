@@ -17,6 +17,7 @@ namespace Util
         float intersectionTime;
         Math::Vector3 unitNormal;
         Math::Vector3 intersectionPoint;
+        int hitObjectIndex = -1;
     };
 };
 

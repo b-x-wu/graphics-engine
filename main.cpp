@@ -121,11 +121,20 @@ int testRGBScene()
 {
     RGBScene rgbScene = RGBScene();
 
-    std::unique_ptr<Sphere> sphere(new Sphere(2, { 8, 5, 5 }));
-    std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 20, 2, 4 }, { 10, 2, -4 }));
+    std::unique_ptr<Sphere> sphere1(new Sphere(2, { 8, 5, 5 }));
+    std::unique_ptr<Material> sphereMaterial1(new StandardShaderMaterial(0.1, { 255, 255, 0 }, 50, { 125, 125, 125 }, { 255, 255, 0 }));
+    sphere1->setMaterial(std::move(sphereMaterial1));
+
+    std::unique_ptr<Sphere> sphere2(new Sphere(3, { 9, 8, 8 }));
+    std::unique_ptr<Material> sphereMaterial2(new StandardShaderMaterial(0.1, { 255, 255, 0 }, 100, { 30, 200, 200 }, { 255, 255, 0 }));
+    sphere2->setMaterial(std::move(sphereMaterial2));
+
+    // std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 20, 2, 4 }, { 10, 2, -4 }));
+    
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
-    groupSurface->addSurface(std::move(triangle));
-    groupSurface->addSurface(std::move(sphere));
+    // groupSurface->addSurface(std::move(triangle));
+    groupSurface->addSurface(std::move(sphere1));
+    groupSurface->addSurface(std::move(sphere2));
 
     // std::unique_ptr<LambertShaderMaterial> material(new LambertShaderMaterial({ 255, 255, 255 }));
     // std::unique_ptr<BlinnPhongShaderMaterial> material(new BlinnPhongShaderMaterial(10));

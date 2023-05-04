@@ -199,6 +199,7 @@ bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::
     bool groupHit = false;
     bool surfaceHit;
     float tMax = t1;
+    int surfaceIndex = 0;
     std::unique_ptr<Util::HitRecord> surfaceHitRecord = std::unique_ptr<Util::HitRecord>(new Util::HitRecord);
     for (auto & surface : this->surfaces)
     {
@@ -210,7 +211,9 @@ bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::
             hitRecord->intersectionTime = surfaceHitRecord->intersectionTime;
             hitRecord->unitNormal = surfaceHitRecord->unitNormal;
             hitRecord->intersectionPoint = surfaceHitRecord->intersectionPoint;
+            hitRecord->hitObjectIndex = surfaceIndex;
         }
+        surfaceIndex += 1;
     }
     return groupHit;
 }
@@ -224,4 +227,18 @@ Math::Box GroupSurface::boundingBox() const
 void Surface::setMaterial(std::unique_ptr<Material> material)
 {
     this->material = std::move(material);
+}
+
+Util::Color Surface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+{
+    if (this->material == NULL) { return { 0, 0, 0 }; }
+    return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection);
+}
+
+Util::Color GroupSurface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+{
+    if (hitRecord->hitObjectIndex == -1 && this->material == NULL) { return { 0, 0, 0 }; }
+    if (hitRecord->hitObjectIndex == -1) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection); }
+    if (this->surfaces.at(hitRecord->hitObjectIndex)->material == NULL) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection); }
+    return this->surfaces.at(hitRecord->hitObjectIndex)->material->computeColor(lightSources, std::move(hitRecord), viewDirection);
 }
