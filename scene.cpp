@@ -11,7 +11,7 @@
 const int BYTES_PER_PIXEL = 3;
 const int FILE_HEADER_SIZE = 14;
 const int INFO_HEADER_SIZE = 40;
-const float RENDER_DISTANCE = 300;
+const float RENDER_DISTANCE = 300; // TODO: make render distance settable
 
 Scene::Scene()
 {
@@ -162,4 +162,66 @@ std::string GrayscaleScene::computePixelArray() const
         }
     }
     return pixelArray;
+};
+
+RGBScene::RGBScene() {};
+
+RGBScene::RGBScene(std::unique_ptr<Camera> camera)
+    : Scene(std::move(camera)) {}
+
+void RGBScene::initializeBitmap()
+{
+    this->bitmap = std::vector<std::vector<Util::Color>>(
+        this->camera->getResolutionY(), std::vector<Util::Color>(this->camera->getResolutionX(), { 0, 0, 0 })
+    );
+}
+void RGBScene::setCamera(std::unique_ptr<Camera> camera)
+{
+    this->camera = std::move(camera);
+    this->initializeBitmap();
+}
+void RGBScene::setBackgroundColor(Util::Color backgroundColor)
+{
+    this->backgroundColor = backgroundColor;
+}
+
+void RGBScene::render()
+{
+    for (int j = 0; j < this->camera->getResolutionY(); j++)
+    {
+        for (int i = 0; i < this->camera->getResolutionX(); i++)
+        {
+            this->bitmap.at(j).at(i) = this->computeValueAtPixelIndex(i, j);
+        }
+    }
+}
+
+std::string RGBScene::computePixelArray() const
+{
+    std::string pixelArray(this->camera->getResolutionX() * this->camera->getResolutionY() * BYTES_PER_PIXEL, 0);
+    int idx = 0;
+    Util::Color bitmapValue = this->backgroundColor;
+    for (int i = 0; i < this->camera->getResolutionY(); i++)
+    {
+        for (int j = 0; j < this->camera->getResolutionX(); j++)
+        {
+            idx = 3 * (i * this->camera->getResolutionX() + j);
+            bitmapValue = this->bitmap.at(i).at(j);
+            pixelArray.replace(idx, 1, 1, (char) bitmapValue.red);
+            pixelArray.replace(idx + 1, 1, 1, (char) bitmapValue.green);
+            pixelArray.replace(idx + 2, 1, 1, (char) bitmapValue.blue);
+        }
+    }
+    return pixelArray;
+}
+
+Util::Color RGBScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const
+{
+    std::unique_ptr<Util::HitRecord> hitRecord = std::unique_ptr<Util::HitRecord>(new Util::HitRecord);
+    const Math::Ray viewingRay = this->camera->computeViewingRay(pixelIndexX, pixelIndexY);
+    const bool isHit = this->surface->hit(viewingRay, 0, RENDER_DISTANCE, hitRecord);
+    if (!isHit) { return this->backgroundColor; };
+    
+    const Util::Color pixelColor = this->surface->material->computeColor(this->lightSources, std::move(hitRecord), viewingRay.direction);
+    return pixelColor;
 };

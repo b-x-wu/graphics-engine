@@ -80,10 +80,8 @@ int testMath()
     return 0;
 }
 
-int main()
+int testGrayscaleScene()
 {
-    // testMath();
-
     GrayscaleScene grayscaleScene = GrayscaleScene();
 
     std::unique_ptr<Sphere> sphere(new Sphere(2, { 8, 5, 5 }));
@@ -115,6 +113,52 @@ int main()
     grayscaleScene.setSurface(std::move(groupSurface));
     grayscaleScene.render();
     grayscaleScene.exportToFile("test_render.bmp");
+
+    return 0;
+}
+
+int testRGBScene()
+{
+    RGBScene rgbScene = RGBScene();
+
+    std::unique_ptr<Sphere> sphere(new Sphere(2, { 8, 5, 5 }));
+    std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 20, 2, 4 }, { 10, 2, -4 }));
+    std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
+    groupSurface->addSurface(std::move(triangle));
+    groupSurface->addSurface(std::move(sphere));
+
+    // std::unique_ptr<LambertShaderMaterial> material(new LambertShaderMaterial({ 255, 255, 255 }));
+    // std::unique_ptr<BlinnPhongShaderMaterial> material(new BlinnPhongShaderMaterial(10));
+    std::unique_ptr<StandardShaderMaterial> material(new StandardShaderMaterial(0.1, { 0, 0, 255 }, 50, { 255, 0, 0 }, { 0, 255, 0 }));
+    groupSurface->setMaterial(std::move(material));
+
+    // std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
+    // camera->setOrigin({ 0, 0, 0 });
+    std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
+    camera->setOrigin({ -10, 0, 0 });
+    camera->setFocalLength(10);
+    camera->setOrientation({ 1, 0, 0 });
+    camera->setResolution(1920, 1080);
+    camera->setBounds(-16, 16, 9, -9);
+
+    std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
+    // std::unique_ptr<LightSource> lightSource(new PointLightSource({ 0, 0, 0 }));
+    lightSource->setIntensity(1);
+
+    rgbScene.addLightSource(std::move(lightSource));
+    rgbScene.setCamera(std::move(camera));
+    rgbScene.setSurface(std::move(groupSurface));
+    rgbScene.render();
+    rgbScene.exportToFile("test_render.bmp");
+
+    return 0;
+}
+
+int main()
+{
+    // testMath();
+    // testGrayscaleScene();
+    testRGBScene();
 
     return 0;
 }

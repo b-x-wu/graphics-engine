@@ -29,7 +29,7 @@ protected:
     std::vector<std::unique_ptr<LightSource>> lightSources;
 };
 
-class GrayscaleScene: public Scene
+class GrayscaleScene : public Scene
 {
 public:
     static uint8_t colorToGrayscale(Util::Color color);
@@ -49,6 +49,26 @@ private:
     std::vector<std::vector<uint8_t>> bitmap;
     uint8_t backgroundColor = 0;
     uint8_t computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const;
+};
+
+class RGBScene : public Scene
+{
+public:
+    RGBScene();
+    RGBScene(std::unique_ptr<Camera> camera);
+
+    void initializeBitmap();
+
+    void setCamera(std::unique_ptr<Camera> camera);
+    void setBackgroundColor(Util::Color backgroundColor);
+
+    void render();
+    std::string computePixelArray() const;
+
+private:
+    std::vector<std::vector<Util::Color>> bitmap;
+    Util::Color backgroundColor = { 0, 0, 0 };
+    Util::Color computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const;
 };
 
 #endif

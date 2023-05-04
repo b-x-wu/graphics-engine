@@ -19,7 +19,7 @@ public:
     virtual Math::Vector3 getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const = 0;
 private:
     float intensity;
-    Util::Color color;
+    Util::Color color; // TODO: wait when is this used?
 };
 
 class UnidirectionalLightSource : public LightSource
