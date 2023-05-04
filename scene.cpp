@@ -125,7 +125,7 @@ uint8_t GrayscaleScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndex
     std::unique_ptr<Util::HitRecord> hitRecord = std::unique_ptr<Util::HitRecord>(new Util::HitRecord);
     const Math::Ray viewingRay = this->camera->computeViewingRay(pixelIndexX, pixelIndexY);
     const bool isHit = this->surface->hit(viewingRay, 0, RENDER_DISTANCE, hitRecord);
-    if (!isHit) { return 255; }; // TODO: change this to a settable background color
+    if (!isHit) { return 128; }; // TODO: change this to a settable background color
     
     const Util::Color pixelColor = this->surface->material->computeColor(this->lightSources, std::move(hitRecord), viewingRay.direction);
     return GrayscaleScene::colorToGrayscale(pixelColor);

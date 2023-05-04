@@ -93,20 +93,18 @@ int main()
     groupSurface->addSurface(std::move(sphere));
 
     // std::unique_ptr<LambertShaderMaterial> material(new LambertShaderMaterial({ 255, 255, 255 }));
-    std::unique_ptr<BlinnPhongShaderMaterial> material(new BlinnPhongShaderMaterial(10));
+    // std::unique_ptr<BlinnPhongShaderMaterial> material(new BlinnPhongShaderMaterial(10));
+    std::unique_ptr<StandardShaderMaterial> material(new StandardShaderMaterial(0.1, { 255, 255, 255 }, 50, { 255, 255, 255 }, { 255, 255, 255 }));
     groupSurface->setMaterial(std::move(material));
 
     std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     camera->setOrigin({ 0, 0, 0 });
-    camera->setOrientation({ 1, 0, 0 });
-    camera->setResolution(1920, 1080);
-    camera->setBounds(-16, 16, 9, -9);
     // std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
     // camera->setOrigin({ -10, 0, 0 });
     // camera->setFocalLength(10);
-    // camera->setOrientation({ 1, 0, 0 });
-    // camera->setResolution(1920, 1080);
-    // camera->setBounds(-16, 16, 9, -9);
+    camera->setOrientation({ 1, 0, 0 });
+    camera->setResolution(1920, 1080);
+    camera->setBounds(-16, 16, 9, -9);
 
     std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
     // std::unique_ptr<LightSource> lightSource(new PointLightSource({ 0, 0, 0 }));

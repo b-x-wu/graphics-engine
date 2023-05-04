@@ -58,4 +58,34 @@ private:
     float phongExponent;
 };
 
+// combination of lambert, blinn-phong, and ambient shading
+class StandardShaderMaterial : public Material
+{
+public:
+    StandardShaderMaterial();
+    StandardShaderMaterial(float ambientIntensity, Util::Color ambientColor);
+    StandardShaderMaterial(float ambientIntensity, float phongExponent);
+    StandardShaderMaterial(Util::Color surfaceColor, Util::Color specularColor, Util::Color ambientColor);
+    StandardShaderMaterial(float ambientIntensity, Util::Color ambientColor, float phongExponent, Util::Color surfaceColor, Util::Color specularColor);
+
+    float getAmbientIntensity() const;
+    float getPhongExponent() const;
+    Util::Color getSurfaceColor() const;
+    Util::Color getSpecularColor() const;
+    Util::Color getAmbientColor() const;
+
+    void setAmbientIntensity(float ambientIntensity);
+    void setPhongExponent(float phongExponent);
+    void setSurfaceColor(Util::Color surfaceColor);
+    void setSpecularColor(Util::Color specularColor);
+    void setAmbientColor(Util::Color ambientColor);
+
+    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+private:
+    LambertShaderMaterial lambertShaderMaterial;
+    BlinnPhongShaderMaterial blinnPhongShaderMaterial;
+    float ambientIntensity;
+    Util::Color ambientColor;
+};
+
 #endif
