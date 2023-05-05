@@ -129,10 +129,10 @@ int testRGBScene()
     std::unique_ptr<Material> sphereMaterial2(new StandardShaderMaterial(0.1, { 255, 255, 0 }, 100, { 30, 200, 200 }, { 255, 255, 0 }));
     sphere2->setMaterial(std::move(sphereMaterial2));
 
-    // std::unique_ptr<Triangle> triangle(new Triangle({ 10, -2, 4 }, { 20, 2, 4 }, { 10, 2, -4 }));
+    std::unique_ptr<Triangle> triangle(new Triangle({ 20, 2, 4 }, { 10, -2, 4}, { 10, 2, -4 }, { -1, 0, 0 }));
     
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
-    // groupSurface->addSurface(std::move(triangle));
+    groupSurface->addSurface(std::move(triangle));
     groupSurface->addSurface(std::move(sphere1));
     groupSurface->addSurface(std::move(sphere2));
 

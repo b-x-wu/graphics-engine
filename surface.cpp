@@ -98,6 +98,21 @@ Triangle::Triangle(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::Vector3 v
     this->vertex3 = Math::Vector3(vertex3);
 }
 
+Triangle::Triangle(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::Vector3 vertex3, Math::Vector3 facingDirection)
+{
+    if (Math::dot(Math::cross(vertex2 - vertex1, vertex3 - vertex2), facingDirection) >= 0)
+    {
+        this->vertex1 = vertex1;
+        this->vertex2 = vertex2;
+        this->vertex3 = vertex3;
+        return;
+    }
+
+    this->vertex1 = vertex2;
+    this->vertex2 = vertex1;
+    this->vertex3 = vertex3;
+}
+
 std::vector<Math::Vector3> Triangle::getVertices() const
 {
     std::vector<Math::Vector3> vertices = std::vector<Math::Vector3>();
