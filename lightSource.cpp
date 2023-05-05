@@ -62,6 +62,16 @@ void UnidirectionalLightSource::setDirection(Math::Vector3 direction)
     this->direction = direction;
 }
 
+void UnidirectionalLightSource::setMaxRenderDistance(float maxRenderDistance)
+{
+    this->maxRenderDistance = maxRenderDistance;
+}
+
+float UnidirectionalLightSource::timeToLightSource(Math::Ray ray) const
+{
+    return maxRenderDistance;
+}
+
 Math::Vector3 UnidirectionalLightSource::getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const
 {
     return this->direction / this->direction.norm();
@@ -97,6 +107,12 @@ Math::Vector3 PointLightSource::getPoint() const
 void PointLightSource::setPoint(Math::Vector3 point)
 {
     this->point = point;
+}
+
+float PointLightSource::timeToLightSource(Math::Ray ray) const
+{
+    float raySpeed = ray.direction.norm();
+    return std::abs(this->point.getX() - ray.origin.getX()) / raySpeed;
 }
 
 Math::Vector3 PointLightSource::getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const

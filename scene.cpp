@@ -240,7 +240,7 @@ Util::Color RGBScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY)
     {
         std::unique_ptr<Util::HitRecord> lightSourceHitRecord(new Util::HitRecord);
         p = { hitRecord->intersectionPoint, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
-        this->surface->hit(p, EPSILON, RENDER_DISTANCE, lightSourceHitRecord); // TODO: if it's a single point light should not go to render distance, but to the light
+        this->surface->hit(p, EPSILON, lightSource->timeToLightSource(p), lightSourceHitRecord); // TODO: if it's a single point light should not go to render distance, but to the light
         lightSourceHitRecords.push_back(std::move(lightSourceHitRecord));
     }
     
