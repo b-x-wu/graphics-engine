@@ -207,9 +207,9 @@ std::string RGBScene::computePixelArray() const
         {
             idx = 3 * (i * this->camera->getResolutionX() + j);
             bitmapValue = this->bitmap.at(i).at(j);
-            pixelArray.replace(idx, 1, 1, (char) bitmapValue.red);
+            pixelArray.replace(idx, 1, 1, (char) bitmapValue.blue);
             pixelArray.replace(idx + 1, 1, 1, (char) bitmapValue.green);
-            pixelArray.replace(idx + 2, 1, 1, (char) bitmapValue.blue);
+            pixelArray.replace(idx + 2, 1, 1, (char) bitmapValue.red);
         }
     }
     return pixelArray;
