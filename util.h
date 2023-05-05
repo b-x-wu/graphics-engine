@@ -14,7 +14,7 @@ namespace Util
     };
     struct HitRecord
     {
-        float intersectionTime;
+        float intersectionTime = -1;
         Math::Vector3 unitNormal;
         Math::Vector3 intersectionPoint;
         int hitObjectIndex = -1;

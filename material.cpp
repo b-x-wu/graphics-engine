@@ -23,7 +23,12 @@ void StaticColorMaterial::setSurfaceColor(Util::Color surfaceColor)
     this->surfaceColor = surfaceColor;
 }
 
-Util::Color StaticColorMaterial::computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+Util::Color StaticColorMaterial::computeColor(
+    const std::vector<std::unique_ptr<LightSource>> & lightSources,
+    std::unique_ptr<Util::HitRecord> hitRecord,
+    Math::Vector3 viewDirection,
+    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+) const
 {
     return this->surfaceColor;
 }
@@ -33,7 +38,12 @@ LambertShaderMaterial::LambertShaderMaterial() {}
 LambertShaderMaterial::LambertShaderMaterial(Util::Color surfaceColor)
     : StaticColorMaterial::StaticColorMaterial(surfaceColor) {}
 
-Util::Color LambertShaderMaterial::computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+Util::Color LambertShaderMaterial::computeColor(
+    const std::vector<std::unique_ptr<LightSource>> & lightSources,
+    std::unique_ptr<Util::HitRecord> hitRecord,
+    Math::Vector3 viewDirection,
+    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+) const
 {
     float scalingFactor = 0;
     for (auto & lightSource : lightSources)
@@ -91,7 +101,12 @@ void BlinnPhongShaderMaterial::setSpecularColor(Util::Color specularColor)
     this->specularColor = specularColor;
 }
 
-Util::Color BlinnPhongShaderMaterial::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+Util::Color BlinnPhongShaderMaterial::computeColor(
+    const std::vector<std::unique_ptr<LightSource>> &lightSources,
+    std::unique_ptr<Util::HitRecord> hitRecord,
+    Math::Vector3 viewDirection,
+    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+) const
 {
     float scalingFactor = 0;
     Math::Vector3 v = viewDirection / viewDirection.norm();
@@ -100,7 +115,6 @@ Util::Color BlinnPhongShaderMaterial::computeColor(const std::vector<std::unique
     for (auto & lightSource : lightSources)
     {
         h = (-v - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
-        // std::cout << h << std::endl;
         scalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0f, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
     }
     return {
@@ -112,40 +126,45 @@ Util::Color BlinnPhongShaderMaterial::computeColor(const std::vector<std::unique
 
 StandardShaderMaterial::StandardShaderMaterial()
 {
-    this->lambertShaderMaterial = LambertShaderMaterial();
-    this->blinnPhongShaderMaterial = BlinnPhongShaderMaterial();
+    this->surfaceColor = { 255, 255, 255 };
+    this->specularColor = { 255, 255, 255 };
+    this->phongExponent = 1;
     this->ambientIntensity = 0;
     this->ambientColor = { 255, 255, 255 };
 }
 
 StandardShaderMaterial::StandardShaderMaterial(float ambientIntensity, Util::Color ambientColor)
 {
-    this->lambertShaderMaterial = LambertShaderMaterial();
-    this->blinnPhongShaderMaterial = BlinnPhongShaderMaterial();
+    this->surfaceColor = { 255, 255, 255 };
+    this->specularColor = { 255, 255, 255 };
+    this->phongExponent = 1;
     this->ambientIntensity = ambientIntensity;
     this->ambientColor = ambientColor;
 }
 
 StandardShaderMaterial::StandardShaderMaterial(float ambientIntensity, float phongExponent)
 {
-    this->lambertShaderMaterial = LambertShaderMaterial();
-    this->blinnPhongShaderMaterial = BlinnPhongShaderMaterial(phongExponent);
+    this->surfaceColor = { 255, 255, 255 };
+    this->specularColor = { 255, 255, 255 };
+    this->phongExponent = phongExponent;
     this->ambientIntensity = ambientIntensity;
     this->ambientColor = { 255, 255, 255 };
 }
 
 StandardShaderMaterial::StandardShaderMaterial(Util::Color surfaceColor, Util::Color specularColor, Util::Color ambientColor)
 {
-    this->lambertShaderMaterial = LambertShaderMaterial(surfaceColor);
-    this->blinnPhongShaderMaterial = BlinnPhongShaderMaterial(specularColor);
+    this->surfaceColor = surfaceColor;
+    this->specularColor = specularColor;
+    this->phongExponent = 1;
     this->ambientIntensity = 0;
     this->ambientColor = ambientColor;
 }
 
 StandardShaderMaterial::StandardShaderMaterial(float ambientIntensity, Util::Color ambientColor, float phongExponent, Util::Color surfaceColor, Util::Color specularColor)
 {
-    this->lambertShaderMaterial = LambertShaderMaterial(surfaceColor);
-    this->blinnPhongShaderMaterial = BlinnPhongShaderMaterial(phongExponent, specularColor);
+    this->surfaceColor = surfaceColor;
+    this->specularColor = specularColor;
+    this->phongExponent = phongExponent;
     this->ambientIntensity = ambientIntensity;
     this->ambientColor = ambientColor;
 }
@@ -157,17 +176,17 @@ float StandardShaderMaterial::getAmbientIntensity() const
 
 float StandardShaderMaterial::getPhongExponent() const
 {
-    return this->blinnPhongShaderMaterial.getPhongExponent();
+    return this->phongExponent;
 }
 
 Util::Color StandardShaderMaterial::getSurfaceColor() const
 {
-    return this->lambertShaderMaterial.getSurfaceColor();
+    return this->surfaceColor;
 }
 
 Util::Color StandardShaderMaterial::getSpecularColor() const
 {
-    return this->blinnPhongShaderMaterial.getSpecularColor();
+    return this->specularColor;
 }
 
 Util::Color StandardShaderMaterial::getAmbientColor() const
@@ -182,17 +201,17 @@ void StandardShaderMaterial::setAmbientIntensity(float ambientIntensity)
 
 void StandardShaderMaterial::setPhongExponent(float phongExponent)
 {
-    this->blinnPhongShaderMaterial.setPhongExponent(phongExponent);
+    this->phongExponent = phongExponent;
 }
 
 void StandardShaderMaterial::setSurfaceColor(Util::Color surfaceColor)
 {
-    this->lambertShaderMaterial.setSurfaceColor(surfaceColor);
+    this->surfaceColor = surfaceColor;
 }
 
 void StandardShaderMaterial::setSpecularColor(Util::Color specularColor)
 {
-    this->blinnPhongShaderMaterial.setSpecularColor(specularColor);
+    this->specularColor = specularColor;
 }
 
 void StandardShaderMaterial::setAmbientColor(Util::Color ambientColor)
@@ -200,31 +219,37 @@ void StandardShaderMaterial::setAmbientColor(Util::Color ambientColor)
     this->ambientColor = ambientColor;
 }
 
-Util::Color StandardShaderMaterial::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+Util::Color StandardShaderMaterial::computeColor(
+    const std::vector<std::unique_ptr<LightSource>> &lightSources,
+    std::unique_ptr<Util::HitRecord> hitRecord,
+    Math::Vector3 viewDirection,
+    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+) const
 {
-    // TOOD: wow this way of doing it is bad. maybe make HitRecord a class with a copy-ctor
-    std::unique_ptr<Util::HitRecord> lambertHitRecord(new Util::HitRecord);
-    lambertHitRecord->intersectionPoint = hitRecord->intersectionPoint;
-    lambertHitRecord->intersectionTime = hitRecord->intersectionTime;
-    lambertHitRecord->unitNormal = hitRecord->unitNormal; 
-    const Util::Color lambertOutput = this->lambertShaderMaterial.computeColor(lightSources, std::move(lambertHitRecord), viewDirection);
-    
-    std::unique_ptr<Util::HitRecord> blinnPhongHitRecord(new Util::HitRecord);
-    blinnPhongHitRecord->intersectionPoint = hitRecord->intersectionPoint;
-    blinnPhongHitRecord->intersectionTime = hitRecord->intersectionTime;
-    blinnPhongHitRecord->unitNormal = hitRecord->unitNormal; 
-    const Util::Color blinnPhongOutput = this->blinnPhongShaderMaterial.computeColor(lightSources, std::move(blinnPhongHitRecord), viewDirection);
+    float redAmbientColor = this->ambientColor.red * this->ambientIntensity;
+    float greenAmbientColor = this->ambientColor.green * this->ambientIntensity;
+    float blueAmbientColor = this->ambientColor.blue * this->ambientIntensity;
 
-    // TODO: make color a class with ctors that make it so i don't need to convert every time like this
-    const Util::Color ambientOutput = {
-        (uint8_t) std::min(255, (int) std::floor(this->ambientColor.red * this->ambientIntensity)),
-        (uint8_t) std::min(255, (int) std::floor(this->ambientColor.green * this->ambientIntensity)),
-        (uint8_t) std::min(255, (int) std::floor(this->ambientColor.blue * this->ambientIntensity)),
-    };
+    int lightSourceIndex = 0;
+    float lambertScalingFactor = 0;
+    float blinnPhongScalingFactor = 0;
+    Math::Vector3 unitViewDirection = viewDirection / viewDirection.norm();
+    Math::Vector3 h;
+    for (auto & lightSource : lightSources)
+    {
+        if (lightSourceHitRecords.at(lightSourceIndex)->intersectionTime < 0)
+        {
+            lambertScalingFactor += lightSource->getIntensity() * std::max((float) 0, Math::dot(hitRecord->unitNormal, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
+            
+            h = (-unitViewDirection - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
+            blinnPhongScalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0f, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
+        }
+        lightSourceIndex++;
+    }
 
     return {
-        (uint8_t) std::min(255, (int) lambertOutput.red + (int) blinnPhongOutput.red + (int) ambientOutput.red),
-        (uint8_t) std::min(255, (int) lambertOutput.green + (int) blinnPhongOutput.green + (int) ambientOutput.green),
-        (uint8_t) std::min(255, (int) lambertOutput.blue + (int) blinnPhongOutput.blue + (int) ambientOutput.blue),
+        (uint8_t) std::min(255, (int) std::floor(redAmbientColor + (lambertScalingFactor * this->surfaceColor.red) + (blinnPhongScalingFactor * this->specularColor.red))),
+        (uint8_t) std::min(255, (int) std::floor(greenAmbientColor + (lambertScalingFactor * this->surfaceColor.green) + (blinnPhongScalingFactor * this->specularColor.green))),
+        (uint8_t) std::min(255, (int) std::floor(blueAmbientColor + (lambertScalingFactor * this->surfaceColor.blue) + (blinnPhongScalingFactor * this->specularColor.blue)))
     };
 }

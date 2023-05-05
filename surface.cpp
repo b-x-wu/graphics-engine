@@ -244,16 +244,26 @@ void Surface::setMaterial(std::unique_ptr<Material> material)
     this->material = std::move(material);
 }
 
-Util::Color Surface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+Util::Color Surface::computeColor(
+    const std::vector<std::unique_ptr<LightSource>> &lightSources,
+    std::unique_ptr<Util::HitRecord> hitRecord,
+    Math::Vector3 viewDirection,
+    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+) const
 {
     if (this->material == NULL) { return { 0, 0, 0 }; }
-    return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection);
+    return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords);
 }
 
-Util::Color GroupSurface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const
+Util::Color GroupSurface::computeColor(
+    const std::vector<std::unique_ptr<LightSource>> &lightSources,
+    std::unique_ptr<Util::HitRecord> hitRecord,
+    Math::Vector3 viewDirection,
+    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+) const
 {
     if (hitRecord->hitObjectIndex == -1 && this->material == NULL) { return { 0, 0, 0 }; }
-    if (hitRecord->hitObjectIndex == -1) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection); }
-    if (this->surfaces.at(hitRecord->hitObjectIndex)->material == NULL) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection); }
-    return this->surfaces.at(hitRecord->hitObjectIndex)->material->computeColor(lightSources, std::move(hitRecord), viewDirection);
+    if (hitRecord->hitObjectIndex == -1) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords); }
+    if (this->surfaces.at(hitRecord->hitObjectIndex)->material == NULL) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords); }
+    return this->surfaces.at(hitRecord->hitObjectIndex)->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords);
 }

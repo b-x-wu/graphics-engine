@@ -9,9 +9,12 @@
 class Material
 {
 public:
-    virtual Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources,
-                                     std::unique_ptr<Util::HitRecord> hitRecord,
-                                     Math::Vector3 viewDirection) const = 0;
+    virtual Util::Color computeColor(
+        const std::vector<std::unique_ptr<LightSource>> & lightSources,
+        std::unique_ptr<Util::HitRecord> hitRecord,
+        Math::Vector3 viewDirection,
+        const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+    ) const = 0;
 };
 
 class StaticColorMaterial : public Material
@@ -24,7 +27,12 @@ public:
 
     void setSurfaceColor(Util::Color color);
 
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+    Util::Color computeColor(
+        const std::vector<std::unique_ptr<LightSource>> & lightSources,
+        std::unique_ptr<Util::HitRecord> hitRecord,
+        Math::Vector3 viewDirection,
+        const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+    ) const;
 protected:
     Util::Color surfaceColor;
 };
@@ -35,7 +43,12 @@ public:
     LambertShaderMaterial();
     LambertShaderMaterial(Util::Color surfaceColor);
 
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+    Util::Color computeColor(
+        const std::vector<std::unique_ptr<LightSource>> & lightSources,
+        std::unique_ptr<Util::HitRecord> hitRecord,
+        Math::Vector3 viewDirection,
+        const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+    ) const;
 };
 
 class BlinnPhongShaderMaterial : public Material
@@ -52,7 +65,12 @@ public:
     void setPhongExponent(float phongExponent);
     void setSpecularColor(Util::Color specularColor);
 
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+    Util::Color computeColor(
+        const std::vector<std::unique_ptr<LightSource>> & lightSources,
+        std::unique_ptr<Util::HitRecord> hitRecord,
+        Math::Vector3 viewDirection,
+        const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+    ) const;
 private:
     Util::Color specularColor;
     float phongExponent;
@@ -80,12 +98,16 @@ public:
     void setSpecularColor(Util::Color specularColor);
     void setAmbientColor(Util::Color ambientColor);
 
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> & lightSources, std::unique_ptr<Util::HitRecord> hitRecord, Math::Vector3 viewDirection) const;
+    Util::Color computeColor(
+        const std::vector<std::unique_ptr<LightSource>> & lightSources,
+        std::unique_ptr<Util::HitRecord> hitRecord,
+        Math::Vector3 viewDirection,
+        const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+    ) const;
+
 private:
-    LambertShaderMaterial lambertShaderMaterial;
-    BlinnPhongShaderMaterial blinnPhongShaderMaterial;
-    float ambientIntensity;
-    Util::Color ambientColor;
+    Util::Color surfaceColor, specularColor, ambientColor;
+    float ambientIntensity, phongExponent;
 };
 
 #endif

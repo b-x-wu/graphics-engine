@@ -121,18 +121,18 @@ int testRGBScene()
 {
     RGBScene rgbScene = RGBScene();
 
-    std::unique_ptr<Sphere> sphere1(new Sphere(2, { 8, 5, 5 }));
-    std::unique_ptr<Material> sphereMaterial1(new StandardShaderMaterial(0.1, { 255, 255, 0 }, 50, { 125, 125, 125 }, { 255, 255, 0 }));
+    std::unique_ptr<Sphere> sphere1(new Sphere(10, { 12, 0, 0 }));
+    std::unique_ptr<Material> sphereMaterial1(new StandardShaderMaterial(.5, { 255, 255, 0 }, 50, { 255, 255, 255 }, { 255, 255, 0 }));
     sphere1->setMaterial(std::move(sphereMaterial1));
 
-    std::unique_ptr<Sphere> sphere2(new Sphere(3, { 9, 8, 8 }));
+    std::unique_ptr<Sphere> sphere2(new Sphere(3, { 2, 4, 4 }));
     std::unique_ptr<Material> sphereMaterial2(new StandardShaderMaterial(0.1, { 255, 255, 0 }, 100, { 30, 200, 200 }, { 255, 255, 0 }));
     sphere2->setMaterial(std::move(sphereMaterial2));
 
-    std::unique_ptr<Triangle> triangle(new Triangle({ 20, 2, 4 }, { 10, -2, 4}, { 10, 2, -4 }, { -1, 0, 0 }));
+    // std::unique_ptr<Triangle> triangle(new Triangle({ 20, 2, 4 }, { 10, -2, 4}, { 10, 2, -4 }, { -1, 0, 0 }));
     
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
-    groupSurface->addSurface(std::move(triangle));
+    // groupSurface->addSurface(std::move(triangle));
     groupSurface->addSurface(std::move(sphere1));
     groupSurface->addSurface(std::move(sphere2));
 
@@ -150,10 +150,11 @@ int testRGBScene()
     camera->setResolution(1920, 1080);
     camera->setBounds(-16, 16, 9, -9);
 
-    std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
+    std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, -1 }));
     // std::unique_ptr<LightSource> lightSource(new PointLightSource({ 0, 0, 0 }));
     lightSource->setIntensity(1);
 
+    rgbScene.setBackgroundColor({ 255, 255, 255 });
     rgbScene.addLightSource(std::move(lightSource));
     rgbScene.setCamera(std::move(camera));
     rgbScene.setSurface(std::move(groupSurface));

@@ -12,6 +12,7 @@ const int BYTES_PER_PIXEL = 3;
 const int FILE_HEADER_SIZE = 14;
 const int INFO_HEADER_SIZE = 40;
 const float RENDER_DISTANCE = 300; // TODO: make render distance settable
+const float EPSILON = 0.001;
 
 Scene::Scene()
 {
@@ -132,7 +133,17 @@ uint8_t GrayscaleScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndex
     const bool isHit = this->surface->hit(viewingRay, 0, RENDER_DISTANCE, hitRecord);
     if (!isHit) { return this->backgroundColor; }; // TODO: change this to a settable background color
     
-    const Util::Color pixelColor = this->surface->computeColor(this->lightSources, std::move(hitRecord), viewingRay.direction);
+    std::vector<std::unique_ptr<Util::HitRecord>> lightSourceHitRecords = std::vector<std::unique_ptr<Util::HitRecord>>();
+    Math::Ray p;
+    for (auto & lightSource : this->lightSources)
+    {
+        std::unique_ptr<Util::HitRecord> lightSourceHitRecord(new Util::HitRecord);
+        p = { hitRecord->intersectionPoint, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
+        this->surface->hit(p, EPSILON, RENDER_DISTANCE, lightSourceHitRecord);
+        lightSourceHitRecords.push_back(std::move(lightSourceHitRecord));
+    }
+
+    const Util::Color pixelColor = this->surface->computeColor(this->lightSources, std::move(hitRecord), viewingRay.direction, lightSourceHitRecords);
     return GrayscaleScene::colorToGrayscale(pixelColor);
 }
 
@@ -221,7 +232,18 @@ Util::Color RGBScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY)
     const Math::Ray viewingRay = this->camera->computeViewingRay(pixelIndexX, pixelIndexY);
     const bool isHit = this->surface->hit(viewingRay, 0, RENDER_DISTANCE, hitRecord);
     if (!isHit) { return this->backgroundColor; };
+
+    // TODO: move this to the grayscale scene
+    std::vector<std::unique_ptr<Util::HitRecord>> lightSourceHitRecords = std::vector<std::unique_ptr<Util::HitRecord>>();
+    Math::Ray p;
+    for (auto & lightSource : this->lightSources)
+    {
+        std::unique_ptr<Util::HitRecord> lightSourceHitRecord(new Util::HitRecord);
+        p = { hitRecord->intersectionPoint, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
+        this->surface->hit(p, EPSILON, RENDER_DISTANCE, lightSourceHitRecord); // TODO: if it's a single point light should not go to render distance, but to the light
+        lightSourceHitRecords.push_back(std::move(lightSourceHitRecord));
+    }
     
-    const Util::Color pixelColor = this->surface->computeColor(this->lightSources, std::move(hitRecord), viewingRay.direction);
+    const Util::Color pixelColor = this->surface->computeColor(this->lightSources, std::move(hitRecord), viewingRay.direction, lightSourceHitRecords);
     return pixelColor;
 };
