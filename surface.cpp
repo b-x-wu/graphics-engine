@@ -1,7 +1,7 @@
 #include <cmath>
 #include "surface.h"
 #include "util.h"
-#include "material.h"
+#include "shader.h"
 #include <iostream>
 #include <algorithm>
 
@@ -43,7 +43,7 @@ void Sphere::setCenter(Math::Vector3 center)
     this->center = Math::Vector3(center);
 };
 
-bool Sphere::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const
+bool Sphere::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const
 {
     float discriminant = std::pow((Math::dot(ray.direction, ray.origin - this->center)), 2) -
                             (Math::dot(ray.direction, ray.direction)) *
@@ -135,7 +135,7 @@ void Triangle::setVertices(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::V
     this->vertex3 = vertex3;
 }
 
-bool Triangle::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const
+bool Triangle::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const
 {
     const float a = this->vertex1.getX() - this->vertex2.getX();
     const float b = this->vertex1.getY() - this->vertex2.getY();
@@ -209,13 +209,13 @@ void GroupSurface::addSurface(std::unique_ptr<Surface> surface)
     this->surfaces.push_back(std::move(surface));
 }
 
-bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::unique_ptr<Util::HitRecord> & hitRecord) const
+bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const
 {
     bool groupHit = false;
     bool surfaceHit;
     float tMax = t1;
     int surfaceIndex = 0;
-    std::unique_ptr<Util::HitRecord> surfaceHitRecord = std::unique_ptr<Util::HitRecord>(new Util::HitRecord);
+    std::shared_ptr<Util::HitRecord> surfaceHitRecord = std::shared_ptr<Util::HitRecord>(new Util::HitRecord);
     for (auto & surface : this->surfaces)
     {
         surfaceHit = surface->hit(ray, t0, t1, surfaceHitRecord);
@@ -239,31 +239,36 @@ Math::Box GroupSurface::boundingBox() const
     return Math::Box(this->minBound, this->maxBound);
 }
 
-void Surface::setMaterial(std::unique_ptr<Material> material)
+void Surface::setMaterial(std::unique_ptr<Shader> shader)
 {
-    this->material = std::move(material);
+    this->shader = std::move(shader);
 }
 
-Util::Color Surface::computeColor(
-    const std::vector<std::unique_ptr<LightSource>> &lightSources,
-    std::unique_ptr<Util::HitRecord> hitRecord,
-    Math::Vector3 viewDirection,
-    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
-) const
+Util::Color Surface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    if (this->material == NULL) { return { 0, 0, 0 }; }
-    return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords);
+    if (this->shader == NULL) { return { 0, 0, 0 }; }
+    return this->shader->computeColor(lightSources, viewRay, surface, hitRecord);
 }
 
-Util::Color GroupSurface::computeColor(
-    const std::vector<std::unique_ptr<LightSource>> &lightSources,
-    std::unique_ptr<Util::HitRecord> hitRecord,
-    Math::Vector3 viewDirection,
-    const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
-) const
+// Util::Color Surface::computeColor(
+//     const std::vector<std::unique_ptr<LightSource>> &lightSources,
+//     std::unique_ptr<Util::HitRecord> hitRecord,
+//     Math::Vector3 viewDirection,
+//     const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
+// ) const
+// {
+//     if (this->shader == NULL) { return { 0, 0, 0 }; }
+//     return this->shader->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords);
+// }
+
+Util::Color GroupSurface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    if (hitRecord->hitObjectIndex == -1 && this->material == NULL) { return { 0, 0, 0 }; }
-    if (hitRecord->hitObjectIndex == -1) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords); }
-    if (this->surfaces.at(hitRecord->hitObjectIndex)->material == NULL) { return this->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords); }
-    return this->surfaces.at(hitRecord->hitObjectIndex)->material->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords);
+    // std::unique_ptr<Util::HitRecord> groupHitRecord(new Util::HitRecord);
+    const bool hitsGroup = this->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord);
+
+    if (!hitsGroup) { return { 0, 0, 0 }; } // hitRecord shows that no hit occured
+
+    if (this->surfaces.at(hitRecord->hitObjectIndex)->shader == NULL && this->shader == NULL) { return { 0, 0, 0 }; } // hitRecord shows a hit and no shader displays black
+    if (this->surfaces.at(hitRecord->hitObjectIndex)->shader == NULL) { return this->shader->computeColor(lightSources, viewRay, surface, hitRecord); } // use the shader of the group surface
+    return this->surfaces.at(hitRecord->hitObjectIndex)->shader->computeColor(lightSources, viewRay, surface, hitRecord);
 }

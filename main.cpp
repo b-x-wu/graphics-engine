@@ -7,7 +7,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "surface.h"
-#include "material.h"
+#include "shader.h"
 #include "lightSource.h"
 
 using namespace Math;
@@ -90,10 +90,10 @@ int testGrayscaleScene()
     groupSurface->addSurface(std::move(triangle));
     groupSurface->addSurface(std::move(sphere));
 
-    // std::unique_ptr<LambertShaderMaterial> material(new LambertShaderMaterial({ 255, 255, 255 }));
-    // std::unique_ptr<BlinnPhongShaderMaterial> material(new BlinnPhongShaderMaterial(10));
-    std::unique_ptr<StandardShaderMaterial> material(new StandardShaderMaterial(0.1, { 255, 255, 255 }, 50, { 255, 255, 255 }, { 255, 255, 255 }));
-    groupSurface->setMaterial(std::move(material));
+    // std::unique_ptr<LambertShader> shader(new LambertShader({ 255, 255, 255 }));
+    // std::unique_ptr<BlinnPhongShader> shader(new BlinnPhongShader(10));
+    std::unique_ptr<StandardShader> shader(new StandardShader(0.1, { 255, 255, 255 }, 50, { 255, 255, 255 }, { 255, 255, 255 }));
+    groupSurface->setMaterial(std::move(shader));
 
     // std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     // camera->setOrigin({ 0, 0, 0 });
@@ -122,11 +122,11 @@ int testRGBScene()
     RGBScene rgbScene = RGBScene();
 
     std::unique_ptr<Sphere> sphere1(new Sphere(10, { 12, 0, 0 }));
-    std::unique_ptr<Material> sphereMaterial1(new StandardShaderMaterial(.5, { 255, 255, 0 }, 50, { 255, 255, 255 }, { 255, 255, 0 }));
+    std::unique_ptr<Shader> sphereMaterial1(new LambertShader({ 255, 0, 0 }));
     sphere1->setMaterial(std::move(sphereMaterial1));
 
     std::unique_ptr<Sphere> sphere2(new Sphere(3, { -1, 0, 0 }));
-    std::unique_ptr<Material> sphereMaterial2(new StandardShaderMaterial(0.1, { 255, 255, 0 }, 100, { 30, 200, 200 }, { 255, 255, 0 }));
+    std::unique_ptr<Shader> sphereMaterial2(new StaticColorShader({ 0, 0, 255 }));
     sphere2->setMaterial(std::move(sphereMaterial2));
 
     // std::unique_ptr<Triangle> triangle(new Triangle({ 20, 2, 4 }, { 10, -2, 4}, { 10, 2, -4 }, { -1, 0, 0 }));
@@ -136,10 +136,11 @@ int testRGBScene()
     groupSurface->addSurface(std::move(sphere1));
     groupSurface->addSurface(std::move(sphere2));
 
-    // std::unique_ptr<LambertShaderMaterial> material(new LambertShaderMaterial({ 255, 255, 255 }));
-    // std::unique_ptr<BlinnPhongShaderMaterial> material(new BlinnPhongShaderMaterial(10));
-    std::unique_ptr<StandardShaderMaterial> material(new StandardShaderMaterial(0.1, { 0, 0, 255 }, 50, { 255, 0, 0 }, { 0, 255, 0 }));
-    groupSurface->setMaterial(std::move(material));
+    // std::unique_ptr<LambertShader> shader(new LambertShader({ 255, 255, 255 }));
+    // std::unique_ptr<BlinnPhongShader> shader(new BlinnPhongShader(10));
+    // std::unique_ptr<StandardShader> shader(new StandardShader(0.1, { 0, 0, 255 }, 50, { 255, 0, 0 }, { 0, 255, 0 }));
+    std::unique_ptr<StaticColorShader> shader(new StaticColorShader({ 255, 0, 0}));
+    groupSurface->setMaterial(std::move(shader));
 
     // std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     // camera->setOrigin({ 0, 0, 0 });

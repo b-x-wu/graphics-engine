@@ -6,7 +6,7 @@
 #include "util.h"
 #include "camera.h"
 #include "surface.h"
-#include "material.h"
+#include "shader.h"
 #include "lightSource.h"
 
 class Scene
@@ -16,7 +16,7 @@ public:
     Scene(std::unique_ptr<Camera> camera);
 
     void setCamera(std::unique_ptr<Camera>);
-    void setSurface(std::unique_ptr<Surface>);
+    void setSurface(std::shared_ptr<Surface>);
     void addLightSource(std::unique_ptr<LightSource> lightSource);
 
     virtual void render() = 0;
@@ -24,7 +24,7 @@ public:
     void exportToFile(std::string filename) const;
 
 protected:
-    std::unique_ptr<Surface> surface;
+    std::shared_ptr<Surface> surface;
     std::unique_ptr<Camera> camera;
     std::vector<std::unique_ptr<LightSource>> lightSources;
 };
