@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 
+// TODO: make render distance settable
 const float EPSILON = 0.0001;
 
 StaticColorShader::StaticColorShader()
@@ -251,38 +252,3 @@ Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<Light
         (uint8_t) std::min(255, (int) std::floor(blueAmbientColor + (lambertScalingFactor * this->surfaceColor.blue) + (blinnPhongScalingFactor * this->specularColor.blue)))
     };
 }
-
-// Util::Color StandardShader::computeColor(
-//     const std::vector<std::unique_ptr<LightSource>> &lightSources,
-//     std::unique_ptr<Util::HitRecord> hitRecord,
-//     Math::Vector3 viewDirection,
-//     const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
-// ) const
-// {
-//     float redAmbientColor = this->ambientColor.red * this->ambientIntensity;
-//     float greenAmbientColor = this->ambientColor.green * this->ambientIntensity;
-//     float blueAmbientColor = this->ambientColor.blue * this->ambientIntensity;
-
-//     int lightSourceIndex = 0;
-//     float lambertScalingFactor = 0;
-//     float blinnPhongScalingFactor = 0;
-//     Math::Vector3 unitViewDirection = viewDirection / viewDirection.norm();
-//     Math::Vector3 h;
-//     for (auto & lightSource : lightSources)
-//     {
-//         if (lightSourceHitRecords.at(lightSourceIndex)->intersectionTime < 0)
-//         {
-//             lambertScalingFactor += lightSource->getIntensity() * std::max((float) 0, Math::dot(hitRecord->unitNormal, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
-            
-//             h = (-unitViewDirection - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
-//             blinnPhongScalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0f, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
-//         }
-//         lightSourceIndex++;
-//     }
-
-//     return {
-//         (uint8_t) std::min(255, (int) std::floor(redAmbientColor + (lambertScalingFactor * this->surfaceColor.red) + (blinnPhongScalingFactor * this->specularColor.red))),
-//         (uint8_t) std::min(255, (int) std::floor(greenAmbientColor + (lambertScalingFactor * this->surfaceColor.green) + (blinnPhongScalingFactor * this->specularColor.green))),
-//         (uint8_t) std::min(255, (int) std::floor(blueAmbientColor + (lambertScalingFactor * this->surfaceColor.blue) + (blinnPhongScalingFactor * this->specularColor.blue)))
-//     };
-// }

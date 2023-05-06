@@ -14,7 +14,7 @@ public:
         const std::vector<std::unique_ptr<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Hittable> surface,
-        std::shared_ptr<Util::HitRecord> hitRecord // TODO: it might be the case that this needs to be a shared ptr
+        std::shared_ptr<Util::HitRecord> hitRecord
     ) const = 0;
 };
 

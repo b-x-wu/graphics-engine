@@ -250,20 +250,8 @@ Util::Color Surface::computeColor(const std::vector<std::unique_ptr<LightSource>
     return this->shader->computeColor(lightSources, viewRay, surface, hitRecord);
 }
 
-// Util::Color Surface::computeColor(
-//     const std::vector<std::unique_ptr<LightSource>> &lightSources,
-//     std::unique_ptr<Util::HitRecord> hitRecord,
-//     Math::Vector3 viewDirection,
-//     const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
-// ) const
-// {
-//     if (this->shader == NULL) { return { 0, 0, 0 }; }
-//     return this->shader->computeColor(lightSources, std::move(hitRecord), viewDirection, lightSourceHitRecords);
-// }
-
 Util::Color GroupSurface::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    // std::unique_ptr<Util::HitRecord> groupHitRecord(new Util::HitRecord);
     const bool hitsGroup = this->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord);
 
     if (!hitsGroup) { return { 0, 0, 0 }; } // hitRecord shows that no hit occured

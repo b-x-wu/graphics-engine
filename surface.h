@@ -75,13 +75,6 @@ public:
     void addSurface(std::unique_ptr<Surface> surface);
     
     Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const;
-
-    // Util::Color computeColor(
-    //     const std::vector<std::unique_ptr<LightSource>> & lightSources,
-    //     std::shared_ptr<Util::HitRecord> hitRecord,
-    //     Math::Vector3 viewDirection,
-    //     const std::vector<std::shared_ptr<Util::HitRecord>> & lightSourceHitRecords
-    // ) const;
     
     bool hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
