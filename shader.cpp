@@ -4,6 +4,8 @@
 #include <cmath>
 #include <iostream>
 
+const float EPSILON = 0.0001;
+
 StaticColorShader::StaticColorShader()
 {
     this->surfaceColor = { 0, 0, 0 };
@@ -97,31 +99,22 @@ void BlinnPhongShader::setSpecularColor(Util::Color specularColor)
 
 Util::Color BlinnPhongShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    return Util::Color();
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) { return { 0, 0, 0 }; }
+    float scalingFactor = 0;
+    Math::Vector3 v = viewRay.direction / viewRay.direction.norm();
+    Math::Vector3 h;
+
+    for (auto & lightSource : lightSources)
+    {
+        h = (-v - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
+        scalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0f, Math::dot(hitRecord->unitNormal, h / h.norm())), this->phongExponent);
+    }
+    return {
+        (uint8_t) std::min(255, (int) std::floor(this->specularColor.red * scalingFactor)),
+        (uint8_t) std::min(255, (int) std::floor(this->specularColor.green * scalingFactor)),
+        (uint8_t) std::min(255, (int) std::floor(this->specularColor.blue * scalingFactor))
+    };
 }
-
-// Util::Color BlinnPhongShader::computeColor(
-//     const std::vector<std::unique_ptr<LightSource>> &lightSources,
-//     std::unique_ptr<Util::HitRecord> hitRecord,
-//     Math::Vector3 viewDirection,
-//     const std::vector<std::unique_ptr<Util::HitRecord>> & lightSourceHitRecords
-// ) const
-// {
-//     float scalingFactor = 0;
-//     Math::Vector3 v = viewDirection / viewDirection.norm();
-//     Math::Vector3 h;
-
-//     for (auto & lightSource : lightSources)
-//     {
-//         h = (-v - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
-//         scalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0f, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
-//     }
-//     return {
-//         (uint8_t) std::min(255, (int) std::floor(this->specularColor.red * scalingFactor)),
-//         (uint8_t) std::min(255, (int) std::floor(this->specularColor.green * scalingFactor)),
-//         (uint8_t) std::min(255, (int) std::floor(this->specularColor.blue * scalingFactor))
-//     };
-// }
 
 StandardShader::StandardShader()
 {
@@ -220,7 +213,43 @@ void StandardShader::setAmbientColor(Util::Color ambientColor)
 
 Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    return Util::Color();
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) { return { 0, 0, 0 }; }
+
+    std::vector<std::shared_ptr<Util::HitRecord>> lightSourceHitRecords = std::vector<std::shared_ptr<Util::HitRecord>>();
+    Math::Ray p;
+    for (auto & lightSource : lightSources)
+    {
+        std::shared_ptr<Util::HitRecord> lightSourceHitRecord(new Util::HitRecord);
+        p = { hitRecord->intersectionPoint, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
+        surface->hit(p, EPSILON, lightSource->timeToLightSource(p), lightSourceHitRecord); // TODO: if it's a single point light should not go to render distance, but to the light
+        lightSourceHitRecords.push_back(lightSourceHitRecord);
+    }
+    float redAmbientColor = this->ambientColor.red * this->ambientIntensity;
+    float greenAmbientColor = this->ambientColor.green * this->ambientIntensity;
+    float blueAmbientColor = this->ambientColor.blue * this->ambientIntensity;
+
+    int lightSourceIndex = 0;
+    float lambertScalingFactor = 0;
+    float blinnPhongScalingFactor = 0;
+    Math::Vector3 unitViewDirection = viewRay.direction / viewRay.direction.norm();
+    Math::Vector3 h;
+    for (auto & lightSource : lightSources)
+    {
+        if (lightSourceHitRecords.at(lightSourceIndex)->intersectionTime < 0)
+        {
+            lambertScalingFactor += lightSource->getIntensity() * std::max((float) 0, Math::dot(hitRecord->unitNormal, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
+        
+            h = (-unitViewDirection - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
+            blinnPhongScalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0f, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
+        }
+        lightSourceIndex++;
+    }
+
+    return {
+        (uint8_t) std::min(255, (int) std::floor(redAmbientColor + (lambertScalingFactor * this->surfaceColor.red) + (blinnPhongScalingFactor * this->specularColor.red))),
+        (uint8_t) std::min(255, (int) std::floor(greenAmbientColor + (lambertScalingFactor * this->surfaceColor.green) + (blinnPhongScalingFactor * this->specularColor.green))),
+        (uint8_t) std::min(255, (int) std::floor(blueAmbientColor + (lambertScalingFactor * this->surfaceColor.blue) + (blinnPhongScalingFactor * this->specularColor.blue)))
+    };
 }
 
 // Util::Color StandardShader::computeColor(

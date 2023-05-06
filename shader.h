@@ -53,6 +53,7 @@ public:
 
 class BlinnPhongShader : public Shader
 {
+// TODO: add an option to make the reflective color the color of the light
 public:
     BlinnPhongShader();
     BlinnPhongShader(float phongExponent);
