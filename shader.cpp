@@ -27,10 +27,13 @@ void StaticColorShader::setSurfaceColor(Util::Color surfaceColor)
     this->surfaceColor = surfaceColor;
 }
 
-Util::Color StaticColorShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color StaticColorShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    if (surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) { return this->surfaceColor; }
-    return { 0, 0, 0 };
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) {
+        hitRecord->intersectionTime = -1;
+        return { 0, 0, 0};
+    }
+    return this->surfaceColor;
 }
 
 LambertShader::LambertShader() {}
@@ -38,9 +41,12 @@ LambertShader::LambertShader() {}
 LambertShader::LambertShader(Util::Color surfaceColor)
     : StaticColorShader::StaticColorShader(surfaceColor) {}
 
-Util::Color LambertShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color LambertShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) { return { 0, 0, 0 }; }
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) {
+        hitRecord->intersectionTime = -1;
+        return { 0, 0, 0 };
+    }
     float scalingFactor = 0;
     for (auto & lightSource : lightSources)
     {
@@ -98,9 +104,12 @@ void BlinnPhongShader::setSpecularColor(Util::Color specularColor)
     this->specularColor = specularColor;
 }
 
-Util::Color BlinnPhongShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color BlinnPhongShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) { return { 0, 0, 0 }; }
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) {
+        hitRecord->intersectionTime = -1;
+        return { 0, 0, 0 };
+    }
     float scalingFactor = 0;
     Math::Vector3 v = viewRay.direction / viewRay.direction.norm();
     Math::Vector3 h;
@@ -212,9 +221,12 @@ void StandardShader::setAmbientColor(Util::Color ambientColor)
     this->ambientColor = ambientColor;
 }
 
-Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Hittable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
-    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) { return { 0, 0, 0 }; }
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) {
+        hitRecord->intersectionTime = -1;
+        return { 0, 0, 0 };
+    }
 
     std::vector<std::shared_ptr<Util::HitRecord>> lightSourceHitRecords = std::vector<std::shared_ptr<Util::HitRecord>>();
     Math::Ray p;
@@ -251,4 +263,39 @@ Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<Light
         (uint8_t) std::min(255, (int) std::floor(greenAmbientColor + (lambertScalingFactor * this->surfaceColor.green) + (blinnPhongScalingFactor * this->specularColor.green))),
         (uint8_t) std::min(255, (int) std::floor(blueAmbientColor + (lambertScalingFactor * this->surfaceColor.blue) + (blinnPhongScalingFactor * this->specularColor.blue)))
     };
+}
+
+MirrorShader::MirrorShader() {}
+
+Util::Color MirrorShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+{
+    // std::cout << "got here" << std::endl;
+    if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) {
+        hitRecord->intersectionTime = -1;
+        return { 0, 0, 0 };
+    }
+
+    const Math::Vector3 d = viewRay.direction / viewRay.direction.norm();
+    const Math::Vector3 r = d - 2 * Math::dot(d, hitRecord->unitNormal) * hitRecord->unitNormal;
+    const Math::Ray reflectionRay = { hitRecord->intersectionPoint + (EPSILON * r), r };
+    const Util::Color reflectedColor = surface->computeColor(lightSources, reflectionRay, surface, hitRecord);
+    // if (hitRecord->intersectionTime >= 0) { std::cout << unsigned(reflectedColor.red) << unsigned(reflectedColor.green) << unsigned(reflectedColor.blue) << std::endl; }
+    return reflectedColor;
+    // return this->computeColorRec(lightSources, viewRay, surface, hitRecord, { 0, 0, 0 }, this->maxDepth);
+}
+
+Util::Color MirrorShader::computeColorRec(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord, Util::Color colorSum, int depth) const
+{
+    if (depth == 0) { return colorSum; }
+    const Math::Vector3 d = viewRay.direction / viewRay.direction.norm();
+    const Math::Vector3 r = d - 2 * Math::dot(d, hitRecord->unitNormal) * hitRecord->unitNormal;
+    const Math::Ray reflectionRay = { hitRecord->intersectionPoint, r };
+    const Util::Color reflectedColor = this->baseShader->computeColor(lightSources, reflectionRay, surface, hitRecord); // this assumes the reflected objects are using the same shader as the base shader
+    if (hitRecord->intersectionTime < 0) { return colorSum; }
+    const Util::Color newColorSum = {
+        (uint8_t) std::min(255, (int) std::floor(colorSum.red + reflectedColor.red)),
+        (uint8_t) std::min(255, (int) std::floor(colorSum.green + reflectedColor.green)),
+        (uint8_t) std::min(255, (int) std::floor(colorSum.blue + reflectedColor.blue))
+    }; // TODO: this introduces intermediate rounding error
+    return this->computeColorRec(lightSources, reflectionRay, surface, hitRecord, newColorSum, depth - 1);
 }

@@ -121,45 +121,48 @@ int testRGBScene()
 {
     RGBScene rgbScene = RGBScene();
 
-    std::unique_ptr<Sphere> sphere1(new Sphere(10, { 12, 0, 0 }));
-    std::unique_ptr<Shader> sphereMaterial1(new StandardShader(0.2, { 255, 0, 0 }, 10, { 255, 0, 0 }, { 255, 255, 255 }));
+    std::unique_ptr<Sphere> sphere1(new Sphere(2, { 20, -4, 2 }));
+    std::unique_ptr<Shader> sphereMaterial1(new StandardShader(0.2, { 0, 255, 0 }, 10, { 0, 255, 0 }, { 255, 255, 255 }));
     sphere1->setMaterial(std::move(sphereMaterial1));
 
-    std::unique_ptr<Sphere> sphere2(new Sphere(3, { -1, 0, 0 }));
+    std::unique_ptr<Sphere> sphere2(new Sphere(3, { 15, 5, 3 }));
     std::unique_ptr<Shader> sphereMaterial2(new StandardShader(0.2, { 0, 0, 255 }, 10, { 0, 0, 255 }, { 255, 255, 255 }));
     sphere2->setMaterial(std::move(sphereMaterial2));
 
-    // std::unique_ptr<Triangle> triangle(new Triangle({ 20, 2, 4 }, { 10, -2, 4}, { 10, 2, -4 }, { -1, 0, 0 }));
-    
+    std::unique_ptr<Triangle> triangle(new Triangle({ 100, 0, 0 }, { -300, -100, 0 }, { -300, 100, 0 }, { 0, 0, 1 }));
+    std::unique_ptr<Shader> triangleMaterial(new MirrorShader());
+    // std::unique_ptr<Shader> triangleMaterial(new StandardShader( 0.2, {125, 125, 125}, 10, {125, 125, 125}, {255, 255, 255}));
+    triangle->setMaterial(std::move(triangleMaterial));
+
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
-    // groupSurface->addSurface(std::move(triangle));
     groupSurface->addSurface(std::move(sphere1));
     groupSurface->addSurface(std::move(sphere2));
+    groupSurface->addSurface(std::move(triangle));
 
     // std::unique_ptr<LambertShader> shader(new LambertShader({ 255, 255, 255 }));
     // std::unique_ptr<BlinnPhongShader> shader(new BlinnPhongShader(10));
     // std::unique_ptr<StandardShader> shader(new StandardShader(0.1, { 0, 0, 255 }, 50, { 255, 0, 0 }, { 0, 255, 0 }));
-    std::unique_ptr<StaticColorShader> shader(new StaticColorShader({ 255, 0, 0}));
+    std::unique_ptr<StaticColorShader> shader(new StaticColorShader({ 255, 0, 0 }));
     groupSurface->setMaterial(std::move(shader));
 
     // std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
-    // camera->setOrigin({ 0, 0, 0 });
+    // camera->setOrigin({ 0, 0, 5 });
     std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
-    camera->setOrigin({ -10, 2, -9 });
+    camera->setOrigin({ -10, 0, 5 });
     camera->setFocalLength(10);
-    camera->setOrientation({ 1, 0, 1 });
+    camera->setOrientation({ 1, 0, -0.2 });
     camera->setResolution(1920, 1080);
     camera->setBounds(-16, 16, 9, -9);
 
     // std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
-    std::unique_ptr<LightSource> lightSource1(new PointLightSource({ -10, 0, 0 }));
-    lightSource1->setIntensity(1);
-    std::unique_ptr<LightSource> lightSource2(new UnidirectionalLightSource({ 1, 1, 1 }));
-    lightSource2->setIntensity(0.5);
+    // std::unique_ptr<LightSource> lightSource1(new PointLightSource({ -10, 0, 0 }));
+    // lightSource1->setIntensity(1);
+    std::unique_ptr<LightSource> lightSource2(new UnidirectionalLightSource({ 1, -1, -1 }));
+    lightSource2->setIntensity(1);
 
 
     rgbScene.setBackgroundColor({ 255, 255, 255 });
-    rgbScene.addLightSource(std::move(lightSource1));
+    // rgbScene.addLightSource(std::move(lightSource1));
     rgbScene.addLightSource(std::move(lightSource2));
     rgbScene.setCamera(std::move(camera));
     rgbScene.setSurface(std::move(groupSurface));
