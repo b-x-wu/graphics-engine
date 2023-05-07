@@ -115,27 +115,13 @@ class MirrorShader : public Shader
 public:
     MirrorShader();
 
-    // TODO: create multiplce constructors, getters, and setters
+    // TODO: figure out a way to add a specular component
     Util::Color computeColor(
         const std::vector<std::unique_ptr<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
     ) const;
-
-private:
-    Util::Color computeColorRec(
-        const std::vector<std::unique_ptr<LightSource>> & lightSources,
-        Math::Ray viewRay,
-        std::shared_ptr<Renderable> surface,
-        std::shared_ptr<Util::HitRecord> hitRecord,
-        Util::Color colorSum,
-        int depth
-    ) const;
-
-    std::unique_ptr<Shader> baseShader = std::unique_ptr<Shader>(new StandardShader(0.2, 10));
-    Util::Color specularColor = { 255, 255, 255 };
-    int maxDepth = 1;
 };
 
 #endif
