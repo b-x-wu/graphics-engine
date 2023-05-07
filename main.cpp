@@ -130,7 +130,7 @@ int testRGBScene()
     sphere2->setMaterial(std::move(sphereMaterial2));
 
     std::unique_ptr<Triangle> triangle(new Triangle({ 100, 0, 0 }, { -300, -100, 0 }, { -300, 100, 0 }, { 0, 0, 1 }));
-    std::unique_ptr<Shader> triangleMaterial(new MirrorShader());
+    std::unique_ptr<Shader> triangleMaterial(new MirrorShader({ 255, 255, 255 }, { 100, 100, 255 }, 0.1));
     // std::unique_ptr<Shader> triangleMaterial(new StandardShader( 0.2, {125, 125, 125}, 10, {125, 125, 125}, {255, 255, 255}));
     triangle->setMaterial(std::move(triangleMaterial));
 

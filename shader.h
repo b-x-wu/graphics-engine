@@ -114,6 +114,12 @@ class MirrorShader : public Shader
 {
 public:
     MirrorShader();
+    MirrorShader(float specularWeight);
+    MirrorShader(Util::Color backgroundColor, Util::Color specularColor, float specularWeight);
+
+    void setBackgroundColor(Util::Color backgroundColor);
+    void setSpecularColor(Util::Color specularColor);
+    void setSpecularWeight(float specularWeight);
 
     // TODO: figure out a way to add a specular component
     Util::Color computeColor(
@@ -122,6 +128,10 @@ public:
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
     ) const;
+private:
+    Util::Color backgroundColor = { 255, 255, 255 };
+    Util::Color specularColor = { 0, 0, 0 };
+    float specularWeight = 0; // number in [0, 1] that defines how much of the total is specular color and how much is reflected color
 };
 
 #endif

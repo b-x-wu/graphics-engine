@@ -267,6 +267,41 @@ Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<Light
 
 MirrorShader::MirrorShader() {}
 
+MirrorShader::MirrorShader(float specularWeight)
+{
+    this->setSpecularWeight(specularWeight);
+}
+
+MirrorShader::MirrorShader(Util::Color backgroundColor, Util::Color specularColor, float specularWeight)
+{
+    this->setSpecularWeight(specularWeight);
+    this->specularColor = specularColor;
+    this->backgroundColor = backgroundColor;
+}
+
+void MirrorShader::setBackgroundColor(Util::Color backgroundColor)
+{
+    this->backgroundColor = backgroundColor;
+}
+
+void MirrorShader::setSpecularColor(Util::Color specularColor)
+{
+    this->specularColor = specularColor;
+}
+
+void MirrorShader::setSpecularWeight(float specularWeight)
+{
+    if (specularWeight < 0) {
+        this->specularWeight = 0;
+        return;
+    }
+    if (specularWeight > 1) {
+        this->specularWeight = 1;
+        return;
+    }
+    this->specularWeight = specularWeight;
+}
+
 Util::Color MirrorShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
     if (!surface->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord)) {
@@ -277,5 +312,14 @@ Util::Color MirrorShader::computeColor(const std::vector<std::unique_ptr<LightSo
     const Math::Vector3 d = viewRay.direction / viewRay.direction.norm();
     const Math::Vector3 r = d - 2 * Math::dot(d, hitRecord->unitNormal) * hitRecord->unitNormal;
     const Math::Ray reflectionRay = { hitRecord->intersectionPoint + (EPSILON * r), r };
-    return surface->computeColor(lightSources, reflectionRay, surface, hitRecord);
+    Util::Color reflectionColor = surface->computeColor(lightSources, reflectionRay, surface, hitRecord);
+    if (hitRecord->intersectionTime < 0) {
+        hitRecord->intersectionTime = 1; // TODO: must represent a valid hit. there's a better way to do this
+        reflectionColor = this->backgroundColor;
+    }
+    return {
+        (uint8_t) std::floor(this->specularWeight * this->specularColor.red + (1 - this->specularWeight) * reflectionColor.red),
+        (uint8_t) std::floor(this->specularWeight * this->specularColor.green + (1 - this->specularWeight) * reflectionColor.green),
+        (uint8_t) std::floor(this->specularWeight * this->specularColor.blue + (1 - this->specularWeight) * reflectionColor.blue)
+    };
 }
