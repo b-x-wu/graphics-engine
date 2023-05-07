@@ -117,6 +117,54 @@ int testGrayscaleScene()
     return 0;
 }
 
+int chapter2TestRender()
+{
+    RGBScene rgbScene = RGBScene();
+
+    std::unique_ptr<Sphere> sphere1(new Sphere(2, { 23, -14, 2 }));
+    std::unique_ptr<Shader> sphereMaterial1(new StandardShader(0.2, { 0, 255, 0 }, 10, { 0, 255, 0 }, { 255, 255, 255 }));
+    sphere1->setMaterial(std::move(sphereMaterial1));
+
+    std::unique_ptr<Sphere> sphere2(new Sphere(3, { 15, 5, 3 }));
+    std::unique_ptr<Shader> sphereMaterial2(new StandardShader(0.2, { 0, 0, 255 }, 10, { 0, 0, 255 }, { 255, 255, 255 }));
+    sphere2->setMaterial(std::move(sphereMaterial2));
+
+    std::unique_ptr<GroupSurface> plane(new GroupSurface());
+    std::unique_ptr<Triangle> triangle1(new Triangle({ 300, 1000, 0 }, { -300, -1000, 0 }, { -300, 1000, 0 }, { 0, 0, 1 }));
+    std::unique_ptr<Triangle> triangle2(new Triangle({ 300, 1000, 0 }, { -300, -1000, 0 }, { 300, -1000, 0 }, { 0, 0, 1 }));
+    plane->addSurface(std::move(triangle1));
+    plane->addSurface(std::move(triangle2));
+    std::unique_ptr<Shader> planeMaterial(new MirrorShader({ 180, 180, 255 }, { 220, 220, 255 }, 0.7));
+    plane->setMaterial(std::move(planeMaterial));
+
+    std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
+    groupSurface->addSurface(std::move(sphere1));
+    groupSurface->addSurface(std::move(sphere2));
+    groupSurface->addSurface(std::move(plane));
+
+    std::unique_ptr<StaticColorShader> shader(new StaticColorShader({ 255, 0, 0 }));
+    groupSurface->setMaterial(std::move(shader));
+
+    std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
+    camera->setOrigin({ 5, 0, 5 });
+    camera->setFocalLength(10);
+    camera->setOrientation({ 1, 0, -0.2 });
+    camera->setResolution(1920, 1080);
+    camera->setBounds(-16, 16, 9, -9);
+
+    std::unique_ptr<LightSource> lightSource1(new PointLightSource({ 10, 0, 5 }));
+    lightSource1->setIntensity(0.5);
+
+    rgbScene.setBackgroundColor({ 180, 180, 255 });
+    rgbScene.addLightSource(std::move(lightSource1));
+    rgbScene.setCamera(std::move(camera));
+    rgbScene.setSurface(std::move(groupSurface));
+    rgbScene.render();
+    rgbScene.exportToFile("test_render.bmp");
+
+    return 0;
+}
+
 int testRGBScene()
 {
     RGBScene rgbScene = RGBScene();
@@ -129,15 +177,19 @@ int testRGBScene()
     std::unique_ptr<Shader> sphereMaterial2(new StandardShader(0.2, { 0, 0, 255 }, 10, { 0, 0, 255 }, { 255, 255, 255 }));
     sphere2->setMaterial(std::move(sphereMaterial2));
 
-    std::unique_ptr<Triangle> triangle(new Triangle({ 100, 0, 0 }, { -300, -100, 0 }, { -300, 100, 0 }, { 0, 0, 1 }));
-    std::unique_ptr<Shader> triangleMaterial(new MirrorShader({ 255, 255, 255 }, { 100, 100, 255 }, 0.1));
+    std::unique_ptr<GroupSurface> plane(new GroupSurface());
+    std::unique_ptr<Triangle> triangle1(new Triangle({ 300, 1000, 0 }, { -300, -1000, 0 }, { -300, 1000, 0 }, { 0, 0, 1 }));
+    std::unique_ptr<Triangle> triangle2(new Triangle({ 300, 1000, 0 }, { -300, -1000, 0 }, { 300, -1000, 0 }, { 0, 0, 1 }));
+    plane->addSurface(std::move(triangle1));
+    plane->addSurface(std::move(triangle2));
+    std::unique_ptr<Shader> planeMaterial(new MirrorShader({ 180, 180, 255 }, { 220, 220, 255 }, 0.7));
     // std::unique_ptr<Shader> triangleMaterial(new StandardShader( 0.2, {125, 125, 125}, 10, {125, 125, 125}, {255, 255, 255}));
-    triangle->setMaterial(std::move(triangleMaterial));
+    plane->setMaterial(std::move(planeMaterial));
 
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
     groupSurface->addSurface(std::move(sphere1));
     groupSurface->addSurface(std::move(sphere2));
-    groupSurface->addSurface(std::move(triangle));
+    groupSurface->addSurface(std::move(plane));
 
     // std::unique_ptr<LambertShader> shader(new LambertShader({ 255, 255, 255 }));
     // std::unique_ptr<BlinnPhongShader> shader(new BlinnPhongShader(10));
@@ -148,22 +200,22 @@ int testRGBScene()
     // std::unique_ptr<ParallelOrthographicCamera> camera(new ParallelOrthographicCamera());
     // camera->setOrigin({ 0, 0, 5 });
     std::unique_ptr<PerspectiveCamera> camera(new PerspectiveCamera());
-    camera->setOrigin({ -10, 0, 5 });
+    camera->setOrigin({ 5, 0, 5 });
     camera->setFocalLength(10);
     camera->setOrientation({ 1, 0, -0.2 });
     camera->setResolution(1920, 1080);
     camera->setBounds(-16, 16, 9, -9);
 
     // std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
-    // std::unique_ptr<LightSource> lightSource1(new PointLightSource({ -10, 0, 0 }));
-    // lightSource1->setIntensity(1);
-    std::unique_ptr<LightSource> lightSource2(new UnidirectionalLightSource({ 1, -1, -1 }));
-    lightSource2->setIntensity(1);
+    std::unique_ptr<LightSource> lightSource1(new PointLightSource({ 10, 0, 5 }));
+    lightSource1->setIntensity(0.5);
+    // std::unique_ptr<LightSource> lightSource2(new UnidirectionalLightSource({ 1, -1, -1 }));
+    // lightSource2->setIntensity(0.5);
 
 
-    rgbScene.setBackgroundColor({ 255, 255, 255 });
-    // rgbScene.addLightSource(std::move(lightSource1));
-    rgbScene.addLightSource(std::move(lightSource2));
+    rgbScene.setBackgroundColor({ 180, 180, 255 });
+    rgbScene.addLightSource(std::move(lightSource1));
+    // rgbScene.addLightSource(std::move(lightSource2));
     rgbScene.setCamera(std::move(camera));
     rgbScene.setSurface(std::move(groupSurface));
     rgbScene.render();
@@ -176,7 +228,8 @@ int main()
 {
     // testMath();
     // testGrayscaleScene();
-    testRGBScene();
+    // testRGBScene();
+    chapter2TestRender();
 
     return 0;
 }

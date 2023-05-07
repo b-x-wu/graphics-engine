@@ -309,6 +309,7 @@ Util::Color MirrorShader::computeColor(const std::vector<std::unique_ptr<LightSo
         return { 0, 0, 0 };
     }
 
+    // TODO: check if the light bounces off the mirror and add that to lightSources
     const Math::Vector3 d = viewRay.direction / viewRay.direction.norm();
     const Math::Vector3 r = d - 2 * Math::dot(d, hitRecord->unitNormal) * hitRecord->unitNormal;
     const Math::Ray reflectionRay = { hitRecord->intersectionPoint + (EPSILON * r), r };
