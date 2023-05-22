@@ -14,7 +14,7 @@ public:
     void setMaterial(std::unique_ptr<Shader> shader);
 
     virtual Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> & lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> & lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
@@ -74,7 +74,7 @@ public:
 
     void addSurface(std::unique_ptr<Surface> surface);
     
-    Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const;
+    Util::Color computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const;
     
     bool hit(Math::Ray ray, double t0, double t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;

@@ -11,7 +11,7 @@ class Shader
 {
 public:
     virtual Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> &lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
@@ -29,7 +29,7 @@ public:
     void setSurfaceColor(Util::Color color);
 
     Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> &lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
@@ -44,7 +44,7 @@ public:
     LambertShader();
     LambertShader(Util::Color surfaceColor);
     Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> &lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
@@ -67,7 +67,7 @@ public:
     void setSpecularColor(Util::Color specularColor);
 
     Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> &lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
@@ -100,7 +100,7 @@ public:
     void setAmbientColor(Util::Color ambientColor);
 
     Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> &lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord
@@ -122,7 +122,7 @@ public:
     void setSpecularWeight(double specularWeight);
 
     Util::Color computeColor(
-        const std::vector<std::unique_ptr<LightSource>> &lightSources,
+        const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,
         std::shared_ptr<Renderable> surface,
         std::shared_ptr<Util::HitRecord> hitRecord

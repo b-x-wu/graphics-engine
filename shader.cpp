@@ -27,7 +27,7 @@ void StaticColorShader::setSurfaceColor(Util::Color surfaceColor)
     this->surfaceColor = surfaceColor;
 }
 
-Util::Color StaticColorShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color StaticColorShader::computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
     if (!surface->hit(viewRay, 0, std::numeric_limits<double>::max(), hitRecord)) {
         hitRecord->isValid = false;
@@ -41,7 +41,7 @@ LambertShader::LambertShader() {}
 LambertShader::LambertShader(Util::Color surfaceColor)
     : StaticColorShader::StaticColorShader(surfaceColor) {}
 
-Util::Color LambertShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color LambertShader::computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
     if (!surface->hit(viewRay, 0, std::numeric_limits<double>::max(), hitRecord)) {
         hitRecord->isValid = false;
@@ -50,7 +50,7 @@ Util::Color LambertShader::computeColor(const std::vector<std::unique_ptr<LightS
     double scalingFactor = 0;
     for (auto & lightSource : lightSources)
     {
-        scalingFactor += lightSource->getIntensity() * std::max((double) 0, Math::dot(hitRecord->unitNormal, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
+        scalingFactor += lightSource.get().getIntensity() * std::max((double) 0, Math::dot(hitRecord->unitNormal, -lightSource.get().getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
     }
     
     return {
@@ -104,7 +104,7 @@ void BlinnPhongShader::setSpecularColor(Util::Color specularColor)
     this->specularColor = specularColor;
 }
 
-Util::Color BlinnPhongShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color BlinnPhongShader::computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
     if (!surface->hit(viewRay, 0, std::numeric_limits<double>::max(), hitRecord)) {
         hitRecord->isValid = false;
@@ -116,8 +116,8 @@ Util::Color BlinnPhongShader::computeColor(const std::vector<std::unique_ptr<Lig
 
     for (auto & lightSource : lightSources)
     {
-        h = (-v - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
-        scalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0, Math::dot(hitRecord->unitNormal, h / h.norm())), this->phongExponent);
+        h = (-v - lightSource.get().getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
+        scalingFactor += lightSource.get().getIntensity() * std::pow(std::max(0.0, Math::dot(hitRecord->unitNormal, h / h.norm())), this->phongExponent);
     }
     return {
         (uint8_t) std::min(255, (int) std::floor(this->specularColor.red * scalingFactor)),
@@ -221,7 +221,7 @@ void StandardShader::setAmbientColor(Util::Color ambientColor)
     this->ambientColor = ambientColor;
 }
 
-Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color StandardShader::computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
     if (!surface->hit(viewRay, 0, std::numeric_limits<double>::max(), hitRecord)) {
         hitRecord->isValid = false;
@@ -233,8 +233,8 @@ Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<Light
     for (auto & lightSource : lightSources)
     {
         std::shared_ptr<Util::HitRecord> lightSourceHitRecord(new Util::HitRecord);
-        p = { hitRecord->intersectionPoint, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
-        surface->hit(p, EPSILON, lightSource->timeToLightSource(p), lightSourceHitRecord);
+        p = { hitRecord->intersectionPoint, -lightSource.get().getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
+        surface->hit(p, EPSILON, lightSource.get().timeToLightSource(p), lightSourceHitRecord);
         lightSourceHitRecords.push_back(lightSourceHitRecord);
     }
     double redAmbientColor = this->ambientColor.red * this->ambientIntensity;
@@ -250,10 +250,10 @@ Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<Light
     {
         if (!lightSourceHitRecords.at(lightSourceIndex)->isValid)
         {
-            lambertScalingFactor += lightSource->getIntensity() * std::max((double) 0, Math::dot(hitRecord->unitNormal, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
+            lambertScalingFactor += lightSource.get().getIntensity() * std::max((double) 0, Math::dot(hitRecord->unitNormal, -lightSource.get().getLightDirectionToSurfacePoint(hitRecord->intersectionPoint)));
         
-            h = (-unitViewDirection - lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
-            blinnPhongScalingFactor += lightSource->getIntensity() * std::pow(std::max(0.0, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
+            h = (-unitViewDirection - lightSource.get().getLightDirectionToSurfacePoint(hitRecord->intersectionPoint));
+            blinnPhongScalingFactor += lightSource.get().getIntensity() * std::pow(std::max(0.0, Math::dot(hitRecord->unitNormal, h / h.norm())), this->getPhongExponent());
         }
         lightSourceIndex++;
     }
@@ -302,7 +302,7 @@ void MirrorShader::setSpecularWeight(double specularWeight)
     this->specularWeight = specularWeight;
 }
 
-Util::Color MirrorShader::computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
+Util::Color MirrorShader::computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const
 {
     if (!surface->hit(viewRay, 0, std::numeric_limits<double>::max(), hitRecord)) {
         hitRecord->isValid = false;

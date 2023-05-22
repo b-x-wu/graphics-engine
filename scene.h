@@ -21,7 +21,7 @@ public:
     Camera &getCamera() const;
     Surface &getSurface() const;
 
-    void addLightSource(std::unique_ptr<LightSource> lightSource);
+    void addLightSource(LightSource& lightSource);
     void removeLightSource(size_t idx);
 
     virtual void render() = 0;
@@ -31,7 +31,7 @@ public:
 protected:
     std::shared_ptr<Surface> surface;
     std::unique_ptr<Camera> camera;
-    std::vector<std::unique_ptr<LightSource>> lightSources;
+    std::vector<std::reference_wrapper<LightSource>> lightSources;
 };
 
 class GrayscaleScene : public Scene

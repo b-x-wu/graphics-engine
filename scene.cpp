@@ -19,13 +19,13 @@ const double EPSILON = 0.001;
 Scene::Scene()
 {
     this->camera = std::unique_ptr<Camera>(new ParallelOrthographicCamera());
-    this->lightSources = std::vector<std::unique_ptr<LightSource>>();
+    this->lightSources = std::vector<std::reference_wrapper<LightSource>>();
 }
 
 Scene::Scene(std::unique_ptr<Camera> camera)
 {
     this->camera = std::move(camera);
-    this->lightSources = std::vector<std::unique_ptr<LightSource>>();
+    this->lightSources = std::vector<std::reference_wrapper<LightSource>>();
 };
 
 void Scene::setCamera(std::unique_ptr<Camera> camera)
@@ -48,9 +48,9 @@ Surface &Scene::getSurface() const
     return *this->surface;
 }
 
-void Scene::addLightSource(std::unique_ptr<LightSource> lightSource)
+void Scene::addLightSource(LightSource& lightSource)
 {
-    this->lightSources.push_back(std::move(lightSource));
+    this->lightSources.push_back(lightSource);
 }
 
 void Scene::removeLightSource(size_t idx)
