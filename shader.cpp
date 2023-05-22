@@ -234,7 +234,7 @@ Util::Color StandardShader::computeColor(const std::vector<std::unique_ptr<Light
     {
         std::shared_ptr<Util::HitRecord> lightSourceHitRecord(new Util::HitRecord);
         p = { hitRecord->intersectionPoint, -lightSource->getLightDirectionToSurfacePoint(hitRecord->intersectionPoint) };
-        surface->hit(p, EPSILON, lightSource->timeToLightSource(p), lightSourceHitRecord); // TODO: if it's a single point light should not go to render distance, but to the light
+        surface->hit(p, EPSILON, lightSource->timeToLightSource(p), lightSourceHitRecord);
         lightSourceHitRecords.push_back(lightSourceHitRecord);
     }
     float redAmbientColor = this->ambientColor.red * this->ambientIntensity;

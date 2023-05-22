@@ -121,7 +121,6 @@ public:
     void setSpecularColor(Util::Color specularColor);
     void setSpecularWeight(float specularWeight);
 
-    // TODO: figure out a way to add a specular component
     Util::Color computeColor(
         const std::vector<std::unique_ptr<LightSource>> &lightSources,
         Math::Ray viewRay,
