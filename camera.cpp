@@ -19,7 +19,7 @@ Camera::Camera()
     this->bottomBound = -1;
 };
 
-Camera::Camera(Vector3 viewPoint, Vector3 u, Vector3 v, Vector3 w, int resolutionX, int resolutionY, float leftBound, float rightBound, float topBound, float bottomBound)
+Camera::Camera(Vector3 viewPoint, Vector3 u, Vector3 v, Vector3 w, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound)
 {
     assert (leftBound < 0 && rightBound > 0);
     assert (bottomBound < 0 && topBound > 0);
@@ -35,7 +35,7 @@ Camera::Camera(Vector3 viewPoint, Vector3 u, Vector3 v, Vector3 w, int resolutio
     this->bottomBound = bottomBound;
 };
 
-Camera::Camera(Vector3 viewPoint, Vector3 viewingDirection, int resolutionX, int resolutionY, float leftBound, float rightBound, float topBound, float bottomBound)
+Camera::Camera(Vector3 viewPoint, Vector3 viewingDirection, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound)
 {
     assert (leftBound < 0 && rightBound > 0);
     assert (bottomBound < 0 && topBound > 0);
@@ -90,7 +90,7 @@ void Camera::setOrientation(Math::Vector3 viewingDirection)
     this->w = w;
 };
 
-void Camera::setBounds(float leftBound, float rightBound, float topBound, float bottomBound)
+void Camera::setBounds(double leftBound, double rightBound, double topBound, double bottomBound)
 {
     assert (leftBound < 0 && rightBound > 0);
     assert (bottomBound < 0 && topBound > 0);
@@ -105,8 +105,8 @@ Ray ParallelOrthographicCamera::computeViewingRay(int pixelIndexX, int pixelInde
     assert ((pixelIndexX >= 0) && (pixelIndexX < this->resolutionX));
     assert ((pixelIndexY >= 0) && (pixelIndexY < this->resolutionY));
 
-    const float uCoordinate = this->leftBound + (this->rightBound - this->leftBound) * (pixelIndexX + 0.5) / this->resolutionX;
-    const float vCoordinate = this->bottomBound + (this->topBound - this->bottomBound) * (pixelIndexY + 0.5) / this->resolutionY;
+    const double uCoordinate = this->leftBound + (this->rightBound - this->leftBound) * (pixelIndexX + 0.5) / this->resolutionX;
+    const double vCoordinate = this->bottomBound + (this->topBound - this->bottomBound) * (pixelIndexY + 0.5) / this->resolutionY;
 
     Ray ray;
     ray.direction = -this->w;
@@ -117,19 +117,19 @@ Ray ParallelOrthographicCamera::computeViewingRay(int pixelIndexX, int pixelInde
 
 PerspectiveCamera::PerspectiveCamera(){};
 
-PerspectiveCamera::PerspectiveCamera(Vector3 viewPoint, Vector3 u, Vector3 v, Vector3 w, int resolutionX, int resolutionY, float leftBound, float rightBound, float topBound, float bottomBound, float focalLength)
+PerspectiveCamera::PerspectiveCamera(Vector3 viewPoint, Vector3 u, Vector3 v, Vector3 w, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound, double focalLength)
     : Camera(viewPoint, u, v, w, resolutionX, resolutionY, leftBound, rightBound, topBound, bottomBound)
 {
     this->focalLength = focalLength;
 };
 
-PerspectiveCamera::PerspectiveCamera(Vector3 viewPoint, Vector3 viewingDirection, int resolutionX, int resolutionY, float leftBound, float rightBound, float topBound, float bottomBound, float focalLength)
+PerspectiveCamera::PerspectiveCamera(Vector3 viewPoint, Vector3 viewingDirection, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound, double focalLength)
     : Camera(viewPoint, viewingDirection, resolutionX, resolutionY, leftBound, rightBound, topBound, bottomBound)
 {
     this->focalLength = focalLength;
 };
 
-void PerspectiveCamera::setFocalLength(float focalLength)
+void PerspectiveCamera::setFocalLength(double focalLength)
 {
     this->focalLength = focalLength;
 };
@@ -139,8 +139,8 @@ Ray PerspectiveCamera::computeViewingRay(int pixelIndexX, int pixelIndexY) const
     assert ((pixelIndexX >= 0) && (pixelIndexX < this->resolutionX));
     assert ((pixelIndexY >= 0) && (pixelIndexY < this->resolutionY));
 
-    const float uCoordinate = this->leftBound + (this->rightBound - this->leftBound) * (pixelIndexX + 0.5) / this->resolutionX;
-    const float vCoordinate = this->bottomBound + (this->topBound - this->bottomBound) * (pixelIndexY + 0.5) / this->resolutionY;
+    const double uCoordinate = this->leftBound + (this->rightBound - this->leftBound) * (pixelIndexX + 0.5) / this->resolutionX;
+    const double vCoordinate = this->bottomBound + (this->topBound - this->bottomBound) * (pixelIndexY + 0.5) / this->resolutionY;
 
     Ray ray;
     ray.origin = this->viewPoint;

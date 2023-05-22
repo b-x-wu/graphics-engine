@@ -10,17 +10,17 @@ class LightSource
 {
 public:
     LightSource();
-    LightSource(float intensity);
-    LightSource(float intensity, Util::Color color);
+    LightSource(double intensity);
+    LightSource(double intensity, Util::Color color);
 
-    float getIntensity() const;
+    double getIntensity() const;
 
-    void setIntensity(float intensity);
+    void setIntensity(double intensity);
 
-    virtual float timeToLightSource(Math::Ray ray) const = 0;
+    virtual double timeToLightSource(Math::Ray ray) const = 0;
     virtual Math::Vector3 getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const = 0;
 private:
-    float intensity;
+    double intensity;
     Util::Color color; // TODO: wait when is this used?
 };
 
@@ -29,19 +29,19 @@ class UnidirectionalLightSource : public LightSource
 public:
     UnidirectionalLightSource();
     UnidirectionalLightSource(Math::Vector3 direction);
-    UnidirectionalLightSource(Math::Vector3 direction, float intensity);
-    UnidirectionalLightSource(Math::Vector3 direction, float intensity, Util::Color color);
+    UnidirectionalLightSource(Math::Vector3 direction, double intensity);
+    UnidirectionalLightSource(Math::Vector3 direction, double intensity, Util::Color color);
 
     Math::Vector3 getDirection() const;
 
     void setDirection(Math::Vector3 direction);
-    void setMaxRenderDistance(float maxRenderDistance);
+    void setMaxRenderDistance(double maxRenderDistance);
 
-    float timeToLightSource(Math::Ray ray) const;
+    double timeToLightSource(Math::Ray ray) const;
     Math::Vector3 getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const;
 private:
     Math::Vector3 direction;
-    float maxRenderDistance = std::numeric_limits<float>::max();
+    double maxRenderDistance = std::numeric_limits<double>::max();
 };
 
 class PointLightSource : public LightSource
@@ -49,14 +49,14 @@ class PointLightSource : public LightSource
 public:
     PointLightSource();
     PointLightSource(Math::Vector3 point);
-    PointLightSource(Math::Vector3 point, float intensity);
-    PointLightSource(Math::Vector3 point, float intensity, Util::Color color);
+    PointLightSource(Math::Vector3 point, double intensity);
+    PointLightSource(Math::Vector3 point, double intensity, Util::Color color);
 
     Math::Vector3 getPoint() const;
 
     void setPoint(Math::Vector3 point);
 
-    float timeToLightSource(Math::Ray ray) const;
+    double timeToLightSource(Math::Ray ray) const;
     Math::Vector3 getLightDirectionToSurfacePoint(Math::Vector3 surfacePoint) const;
 private:
     Math::Vector3 point;

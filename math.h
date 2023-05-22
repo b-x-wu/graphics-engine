@@ -10,34 +10,34 @@ namespace Math
     public:
         Vector3();
         Vector3(Vector3 const& v);
-        Vector3(float x, float y, float z);
-        float getX() const;
-        float getY() const;
-        float getZ() const;
+        Vector3(double x, double y, double z);
+        double getX() const;
+        double getY() const;
+        double getZ() const;
 
         Vector3& operator+=(Vector3 const& rhs);
         Vector3& operator-=(Vector3 const& rhs);
         Vector3 operator-() const;
 
-        float norm() const;
+        double norm() const;
 
     private:
-        float x, y, z;
-        void setX(float f);
-        void setY(float f);
-        void setZ(float f);
+        double x, y, z;
+        void setX(double f);
+        void setY(double f);
+        void setZ(double f);
     };
 
     Vector3 operator+(Vector3 const& lhs, Vector3 const& rhs);
     Vector3 operator-(Vector3 const& lhs, Vector3 const& rhs);
     bool operator==(Vector3 const& lhs, Vector3 const& rhs);
     bool operator!=(Vector3 const& lhs, Vector3 const& rhs);
-    Vector3 operator*(float const& lhs, Vector3 const& rhs);
-    Vector3 operator*(Vector3 const& lhs, float const& rhs);
-    Vector3 operator/(Vector3 const& lhs, float const& rhs);
+    Vector3 operator*(double const& lhs, Vector3 const& rhs);
+    Vector3 operator*(Vector3 const& lhs, double const& rhs);
+    Vector3 operator/(Vector3 const& lhs, double const& rhs);
     std::ostream& operator<<(std::ostream &strm, const Vector3 &v);
 
-    float dot(Vector3 const& lhs, Vector3 const& rhs);
+    double dot(Vector3 const& lhs, Vector3 const& rhs);
     Vector3 cross(Vector3 const& lhs, Vector3 const& rhs);
 
     struct Ray

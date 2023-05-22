@@ -8,24 +8,24 @@ LightSource::LightSource()
     this->color = { 0, 0, 0 };
 }
 
-LightSource::LightSource(float intensity)
+LightSource::LightSource(double intensity)
 {
     this->intensity = intensity;
     this->color = { 0, 0, 0 };
 }
 
-LightSource::LightSource(float intensity, Util::Color color)
+LightSource::LightSource(double intensity, Util::Color color)
 {
     this->intensity = intensity;
     this->color = color;
 }
 
-float LightSource::getIntensity() const
+double LightSource::getIntensity() const
 {
     return this->intensity;
 }
 
-void LightSource::setIntensity(float intensity)
+void LightSource::setIntensity(double intensity)
 {
     this->intensity = intensity;
 }
@@ -40,13 +40,13 @@ UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction)
     this->direction = direction;
 }
 
-UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, float intensity)
+UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, double intensity)
     : LightSource::LightSource(intensity)
 {
     this->direction = direction;
 }
 
-UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, float intensity, Util::Color color)
+UnidirectionalLightSource::UnidirectionalLightSource(Math::Vector3 direction, double intensity, Util::Color color)
     : LightSource::LightSource(intensity, color)
 {
     this->direction = direction;
@@ -62,12 +62,12 @@ void UnidirectionalLightSource::setDirection(Math::Vector3 direction)
     this->direction = direction;
 }
 
-void UnidirectionalLightSource::setMaxRenderDistance(float maxRenderDistance)
+void UnidirectionalLightSource::setMaxRenderDistance(double maxRenderDistance)
 {
     this->maxRenderDistance = maxRenderDistance;
 }
 
-float UnidirectionalLightSource::timeToLightSource(Math::Ray ray) const
+double UnidirectionalLightSource::timeToLightSource(Math::Ray ray) const
 {
     return maxRenderDistance;
 }
@@ -87,13 +87,13 @@ PointLightSource::PointLightSource(Math::Vector3 point)
     this->point = point;
 }
 
-PointLightSource::PointLightSource(Math::Vector3 point, float intensity)
+PointLightSource::PointLightSource(Math::Vector3 point, double intensity)
     : LightSource::LightSource(intensity)
 {
     this->point = point;
 }
 
-PointLightSource::PointLightSource(Math::Vector3 point, float intensity, Util::Color color)
+PointLightSource::PointLightSource(Math::Vector3 point, double intensity, Util::Color color)
     : LightSource::LightSource(intensity, color)
 {
     this->point = point;
@@ -109,9 +109,9 @@ void PointLightSource::setPoint(Math::Vector3 point)
     this->point = point;
 }
 
-float PointLightSource::timeToLightSource(Math::Ray ray) const
+double PointLightSource::timeToLightSource(Math::Ray ray) const
 {
-    float raySpeed = ray.direction.norm();
+    double raySpeed = ray.direction.norm();
     return std::abs(this->point.getX() - ray.origin.getX()) / raySpeed;
 }
 

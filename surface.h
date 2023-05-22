@@ -20,7 +20,7 @@ public:
         std::shared_ptr<Util::HitRecord> hitRecord
     ) const;
 
-    virtual bool hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const = 0;
+    virtual bool hit(Math::Ray ray, double t0, double t1, std::shared_ptr<Util::HitRecord> & hitRecord) const = 0;
     virtual Math::Box boundingBox() const = 0;
 
     std::unique_ptr<Shader> shader = NULL;
@@ -30,19 +30,19 @@ class Sphere: public Surface
 {
 public:
     Sphere();
-    Sphere(float radius);
-    Sphere(float radius, Math::Vector3 center);
+    Sphere(double radius);
+    Sphere(double radius, Math::Vector3 center);
 
-    float getRadius() const;
+    double getRadius() const;
     Math::Vector3 getCenter() const;
 
-    void setRadius(float radius);
+    void setRadius(double radius);
     void setCenter(Math::Vector3 center);
 
-    bool hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
+    bool hit(Math::Ray ray, double t0, double t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:
-    float radius;
+    double radius;
     Math::Vector3 center;
 };
 
@@ -61,7 +61,7 @@ public:
 
     void setVertices(Math::Vector3 vertex1, Math::Vector3 vertex2, Math::Vector3 vertex3);
 
-    bool hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
+    bool hit(Math::Ray ray, double t0, double t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:
     Math::Vector3 vertex1, vertex2, vertex3;
@@ -76,7 +76,7 @@ public:
     
     Util::Color computeColor(const std::vector<std::unique_ptr<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const;
     
-    bool hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
+    bool hit(Math::Ray ray, double t0, double t1, std::shared_ptr<Util::HitRecord> & hitRecord) const;
     Math::Box boundingBox() const;
 private:
     std::vector<std::unique_ptr<Surface>> surfaces;

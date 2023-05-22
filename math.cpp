@@ -16,39 +16,39 @@ Math::Vector3::Vector3(Vector3 const& v)
     this->z = v.z;
 }
 
-Math::Vector3::Vector3(float x, float y, float z)
+Math::Vector3::Vector3(double x, double y, double z)
 {
     this->x = x;
     this->y = y;
     this->z = z;
 };
 
-float Math::Vector3::getX() const
+double Math::Vector3::getX() const
 {
     return this->x;
 };
 
-float Math::Vector3::getY() const
+double Math::Vector3::getY() const
 {
     return this->y;
 };
 
-float Math::Vector3::getZ() const
+double Math::Vector3::getZ() const
 {
     return this->z;
 };
 
-void Math::Vector3::setX(float f)
+void Math::Vector3::setX(double f)
 {
     this->x = f;
 };
 
-void Math::Vector3::setY(float f)
+void Math::Vector3::setY(double f)
 {
     this->y = f;
 };
 
-void Math::Vector3::setZ(float f)
+void Math::Vector3::setZ(double f)
 {
     this->z = f;
 };
@@ -76,7 +76,7 @@ Math::Vector3 Math::Vector3::operator-() const
     return { -this->getX(), -this->getY(), -this->getZ() };
 };
 
-float Math::Vector3::norm() const
+double Math::Vector3::norm() const
 {
     return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 };
@@ -101,17 +101,17 @@ bool Math::operator!=(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
     return (lhs.getX() != rhs.getX() || lhs.getY() != rhs.getY() || lhs.getZ() != rhs.getZ());
 };
     
-Math::Vector3 Math::operator*(float const& lhs, Math::Vector3 const& rhs)
+Math::Vector3 Math::operator*(double const& lhs, Math::Vector3 const& rhs)
 {
     return { lhs * rhs.getX(), lhs * rhs.getY(), lhs * rhs.getZ() };
 };
 
-Math::Vector3 Math::operator*(Math::Vector3 const& lhs, float const& rhs)
+Math::Vector3 Math::operator*(Math::Vector3 const& lhs, double const& rhs)
 {
     return { lhs.getX() * rhs, lhs.getY() * rhs, lhs.getZ() * rhs };    
 };
 
-Math::Vector3 Math::operator/(Math::Vector3 const& lhs, float const& rhs)
+Math::Vector3 Math::operator/(Math::Vector3 const& lhs, double const& rhs)
 {
     return { lhs.getX() / rhs, lhs.getY() / rhs, lhs.getZ() / rhs };
 };
@@ -121,16 +121,16 @@ std::ostream& Math::operator<<(std::ostream &strm, const Math::Vector3 &v)
     return strm << "x: " << v.getX() << " y: " << v.getY() << " z: " << v.getZ();
 }
 
-float Math::dot(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
+double Math::dot(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
 {
     return lhs.getX() * rhs.getX() + lhs.getY() * rhs.getY() + lhs.getZ() * rhs.getZ();
 }
 
 Math::Vector3 Math::cross(Math::Vector3 const& lhs, Math::Vector3 const& rhs)
 {
-    float x = lhs.getY() * rhs.getZ() - lhs.getZ() * rhs.getY();
-    float y = -(lhs.getX() * rhs.getZ() - lhs.getZ() * rhs.getX());
-    float z = lhs.getX() * rhs.getY() - lhs.getY() * rhs.getX();
+    double x = lhs.getY() * rhs.getZ() - lhs.getZ() * rhs.getY();
+    double y = -(lhs.getX() * rhs.getZ() - lhs.getZ() * rhs.getX());
+    double z = lhs.getX() * rhs.getY() - lhs.getY() * rhs.getX();
 
     return { x, y, z };
 }

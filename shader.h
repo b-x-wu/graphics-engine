@@ -56,14 +56,14 @@ class BlinnPhongShader : public Shader
 // TODO: add an option to make the reflective color the color of the light
 public:
     BlinnPhongShader();
-    BlinnPhongShader(float phongExponent);
+    BlinnPhongShader(double phongExponent);
     BlinnPhongShader(Util::Color specularColor);
-    BlinnPhongShader(float phongExponent, Util::Color specularColor);
+    BlinnPhongShader(double phongExponent, Util::Color specularColor);
 
-    float getPhongExponent() const;
+    double getPhongExponent() const;
     Util::Color getSpecularColor() const;
 
-    void setPhongExponent(float phongExponent);
+    void setPhongExponent(double phongExponent);
     void setSpecularColor(Util::Color specularColor);
 
     Util::Color computeColor(
@@ -74,7 +74,7 @@ public:
     ) const;
 private:
     Util::Color specularColor;
-    float phongExponent;
+    double phongExponent;
 };
 
 // combination of lambert, blinn-phong, and ambient shading
@@ -82,19 +82,19 @@ class StandardShader : public Shader
 {
 public:
     StandardShader();
-    StandardShader(float ambientIntensity, Util::Color ambientColor);
-    StandardShader(float ambientIntensity, float phongExponent);
+    StandardShader(double ambientIntensity, Util::Color ambientColor);
+    StandardShader(double ambientIntensity, double phongExponent);
     StandardShader(Util::Color surfaceColor, Util::Color specularColor, Util::Color ambientColor);
-    StandardShader(float ambientIntensity, Util::Color ambientColor, float phongExponent, Util::Color surfaceColor, Util::Color specularColor);
+    StandardShader(double ambientIntensity, Util::Color ambientColor, double phongExponent, Util::Color surfaceColor, Util::Color specularColor);
 
-    float getAmbientIntensity() const;
-    float getPhongExponent() const;
+    double getAmbientIntensity() const;
+    double getPhongExponent() const;
     Util::Color getSurfaceColor() const;
     Util::Color getSpecularColor() const;
     Util::Color getAmbientColor() const;
 
-    void setAmbientIntensity(float ambientIntensity);
-    void setPhongExponent(float phongExponent);
+    void setAmbientIntensity(double ambientIntensity);
+    void setPhongExponent(double phongExponent);
     void setSurfaceColor(Util::Color surfaceColor);
     void setSpecularColor(Util::Color specularColor);
     void setAmbientColor(Util::Color ambientColor);
@@ -107,19 +107,19 @@ public:
     ) const;
 private:
     Util::Color surfaceColor, specularColor, ambientColor;
-    float ambientIntensity, phongExponent;
+    double ambientIntensity, phongExponent;
 };
 
 class MirrorShader : public Shader
 {
 public:
     MirrorShader();
-    MirrorShader(float specularWeight);
-    MirrorShader(Util::Color backgroundColor, Util::Color specularColor, float specularWeight);
+    MirrorShader(double specularWeight);
+    MirrorShader(Util::Color backgroundColor, Util::Color specularColor, double specularWeight);
 
     void setBackgroundColor(Util::Color backgroundColor);
     void setSpecularColor(Util::Color specularColor);
-    void setSpecularWeight(float specularWeight);
+    void setSpecularWeight(double specularWeight);
 
     Util::Color computeColor(
         const std::vector<std::unique_ptr<LightSource>> &lightSources,
@@ -130,7 +130,7 @@ public:
 private:
     Util::Color backgroundColor = { 255, 255, 255 };
     Util::Color specularColor = { 0, 0, 0 };
-    float specularWeight = 0; // number in [0, 1] that defines how much of the total is specular color and how much is reflected color
+    double specularWeight = 0; // number in [0, 1] that defines how much of the total is specular color and how much is reflected color
 };
 
 #endif

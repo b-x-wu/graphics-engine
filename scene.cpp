@@ -12,7 +12,7 @@
 const int BYTES_PER_PIXEL = 3;
 const int FILE_HEADER_SIZE = 14;
 const int INFO_HEADER_SIZE = 40;
-const float EPSILON = 0.001;
+const double EPSILON = 0.001;
 
 Scene::Scene()
 {
