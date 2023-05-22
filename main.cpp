@@ -207,15 +207,15 @@ int testRGBScene()
     camera->setBounds(-16, 16, 9, -9);
 
     // std::unique_ptr<LightSource> lightSource(new UnidirectionalLightSource({ 1, 0, 0 }));
-    std::unique_ptr<LightSource> lightSource1(new PointLightSource({ 10, 0, 5 }));
-    lightSource1->setIntensity(0.5);
-    // std::unique_ptr<LightSource> lightSource2(new UnidirectionalLightSource({ 1, -1, -1 }));
-    // lightSource2->setIntensity(0.5);
+    // std::unique_ptr<LightSource> lightSource1(new PointLightSource({ 10, 0, 5 }));
+    // lightSource1->setIntensity(0.5);
+    std::unique_ptr<LightSource> lightSource2(new UnidirectionalLightSource({ 1, -1, -1 }));
+    lightSource2->setIntensity(0.5);
 
 
     rgbScene.setBackgroundColor({ 180, 180, 255 });
-    rgbScene.addLightSource(std::move(lightSource1));
-    // rgbScene.addLightSource(std::move(lightSource2));
+    // rgbScene.addLightSource(std::move(lightSource1));
+    rgbScene.addLightSource(std::move(lightSource2));
     rgbScene.setCamera(std::move(camera));
     rgbScene.setSurface(std::move(groupSurface));
     rgbScene.render();
@@ -228,8 +228,8 @@ int main()
 {
     // testMath();
     // testGrayscaleScene();
-    // testRGBScene();
-    chapter2TestRender();
+    testRGBScene();
+    // chapter2TestRender();
 
     return 0;
 }

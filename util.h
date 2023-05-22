@@ -14,6 +14,7 @@ namespace Util
     };
     struct HitRecord
     {
+        bool isValid = false;
         float intersectionTime = -1;
         Math::Vector3 unitNormal;
         Math::Vector3 intersectionPoint;

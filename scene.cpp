@@ -131,7 +131,7 @@ uint8_t GrayscaleScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndex
     std::shared_ptr<Util::HitRecord> hitRecord(new Util::HitRecord);
     const Math::Ray viewRay = this->camera->computeViewingRay(pixelIndexX, pixelIndexY);
     const Util::Color pixelColor = this->surface->computeColor(this->lightSources, viewRay, this->surface, hitRecord);
-    if (hitRecord->intersectionTime < 0) { return this->backgroundColor; }
+    if (!hitRecord->isValid) { return this->backgroundColor; }
     return GrayscaleScene::colorToGrayscale(pixelColor);
 }
 
@@ -219,6 +219,6 @@ Util::Color RGBScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY)
     std::shared_ptr<Util::HitRecord> hitRecord(new Util::HitRecord);
     const Math::Ray viewRay = this->camera->computeViewingRay(pixelIndexX, pixelIndexY);
     const Util::Color pixelColor = this->surface->computeColor(this->lightSources, viewRay, this->surface, hitRecord);
-    if (hitRecord->intersectionTime < 0) { return this->backgroundColor; }
+    if (!hitRecord->isValid) { return this->backgroundColor; }
     return pixelColor;
 }

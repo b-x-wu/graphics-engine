@@ -57,6 +57,7 @@ bool Sphere::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRec
         if (t < t0 || t > t1) { return false; };
         
         hitRecord->intersectionTime = t;
+        hitRecord->isValid = true;
         const Math::Vector3 p = ray.origin + t * ray.direction;
         hitRecord->unitNormal = (p - this->center) / this->radius;
         hitRecord->intersectionPoint = p;
@@ -71,6 +72,7 @@ bool Sphere::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitRec
     // generally t will be non negative (ie the ray shoots forward and only forward from the origin). we want the first hit between t0 and t1
     const float t = std::min(tPlus, tMinus) >= t0 && std::min(tPlus, tMinus) <= t1 ? std::min(tPlus, tMinus) : std::max(tPlus, tMinus);
     hitRecord->intersectionTime = t;
+    hitRecord->isValid = true;
     const Math::Vector3 p = ray.origin + t * ray.direction;
     hitRecord->unitNormal = (p - this->center) / this->radius;
     hitRecord->intersectionPoint = p;
@@ -168,6 +170,7 @@ bool Triangle::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::HitR
     if (beta < 0 || beta > 1 - gamma) { return false; }
 
     hitRecord->intersectionTime = t;
+    hitRecord->isValid = true;
     hitRecord->unitNormal = Math::Vector3(this->getUnitNormal());
     hitRecord->intersectionPoint = ray.origin + t * ray.direction;
     return true;
@@ -224,6 +227,7 @@ bool GroupSurface::hit(Math::Ray ray, float t0, float t1, std::shared_ptr<Util::
             groupHit = true;
             tMax = surfaceHitRecord->intersectionTime;
             hitRecord->intersectionTime = surfaceHitRecord->intersectionTime;
+            hitRecord->isValid = true;
             hitRecord->unitNormal = surfaceHitRecord->unitNormal;
             hitRecord->intersectionPoint = surfaceHitRecord->intersectionPoint;
             hitRecord->hitObjectIndex = surfaceIndex;
@@ -255,9 +259,9 @@ Util::Color GroupSurface::computeColor(const std::vector<std::unique_ptr<LightSo
     const bool hitsGroup = this->hit(viewRay, 0, std::numeric_limits<float>::max(), hitRecord);
 
     if (!hitsGroup) {
-        hitRecord->intersectionTime = -1;
+        hitRecord->isValid = false;
         return { 0, 0, 0 };
-    } // hitRecord shows that no hit occured
+    }
     if (this->surfaces.at(hitRecord->hitObjectIndex)->shader == NULL && this->shader == NULL) { return { 0, 0, 0 }; } // hitRecord shows a hit and no shader displays black
     if (this->surfaces.at(hitRecord->hitObjectIndex)->shader == NULL) { return this->shader->computeColor(lightSources, viewRay, surface, hitRecord); } // use the shader of the group surface
     return this->surfaces.at(hitRecord->hitObjectIndex)->shader->computeColor(lightSources, viewRay, surface, hitRecord);
