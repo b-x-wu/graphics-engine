@@ -20,7 +20,8 @@ public:
     void setOrientation(Math::Vector3 u, Math::Vector3 v, Math::Vector3 w);
     void setOrientation(Math::Vector3 viewingDirection); // points the camera toward the viewing direction
     void setBounds(double leftBound, double rightBound, double topBound, double bottomBound);
-
+    void setFocalLength(double focalLength);
+    
     virtual Math::Ray computeViewingRay(int pixelIndexX, int pixelIndexY) const = 0;
 
 protected:
@@ -30,6 +31,7 @@ protected:
     // up points right, v upwards, and w against the direction of the camera
     Math:: Vector3 u, v, w;
     double leftBound, rightBound, topBound, bottomBound; // labeled l, r, u, d in the text
+    double focalLength = 0;
 };
 
 class ParallelOrthographicCamera: public Camera
@@ -45,12 +47,7 @@ public:
     PerspectiveCamera(Math::Vector3 viewPoint, Math::Vector3 u, Math::Vector3 v, Math::Vector3 w, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound, double focalLength);
     PerspectiveCamera(Math::Vector3 viewPoint, Math::Vector3 viewingDirection, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound, double focalLength);
 
-    void setFocalLength(double focalLength);
-
     Math::Ray computeViewingRay(int pixelIndexX, int pixelIndexY) const;
-
-protected:
-    double focalLength = 0;
 };
 
 #endif

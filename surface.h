@@ -83,5 +83,4 @@ private:
     Math::Vector3 minBound, maxBound;
 };
 
-
 #endif

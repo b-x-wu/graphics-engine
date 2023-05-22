@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <cmath>
 #include <memory>
+#include <unistd.h>
 
 #include "math.h"
 #include "camera.h"
@@ -183,7 +184,6 @@ int testRGBScene()
     plane->addSurface(std::move(triangle1));
     plane->addSurface(std::move(triangle2));
     std::unique_ptr<Shader> planeMaterial(new MirrorShader({ 180, 180, 255 }, { 220, 220, 255 }, 0.7));
-    // std::unique_ptr<Shader> triangleMaterial(new StandardShader( 0.2, {125, 125, 125}, 10, {125, 125, 125}, {255, 255, 255}));
     plane->setMaterial(std::move(planeMaterial));
 
     std::unique_ptr<GroupSurface> groupSurface(new GroupSurface());
@@ -191,9 +191,6 @@ int testRGBScene()
     groupSurface->addSurface(std::move(sphere2));
     groupSurface->addSurface(std::move(plane));
 
-    // std::unique_ptr<LambertShader> shader(new LambertShader({ 255, 255, 255 }));
-    // std::unique_ptr<BlinnPhongShader> shader(new BlinnPhongShader(10));
-    // std::unique_ptr<StandardShader> shader(new StandardShader(0.1, { 0, 0, 255 }, 50, { 255, 0, 0 }, { 0, 255, 0 }));
     std::unique_ptr<StaticColorShader> shader(new StaticColorShader({ 255, 0, 0 }));
     groupSurface->setMaterial(std::move(shader));
 
@@ -218,6 +215,11 @@ int testRGBScene()
     rgbScene.addLightSource(std::move(lightSource2));
     rgbScene.setCamera(std::move(camera));
     rgbScene.setSurface(std::move(groupSurface));
+    rgbScene.render();
+    rgbScene.exportToFile("test_render.bmp");
+    sleep(5);
+
+    rgbScene.getCamera().setOrigin({ 0, 0, 5 });
     rgbScene.render();
     rgbScene.exportToFile("test_render.bmp");
 

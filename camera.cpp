@@ -98,6 +98,10 @@ void Camera::setBounds(double leftBound, double rightBound, double topBound, dou
     this->rightBound = rightBound;
     this->topBound = topBound;
     this->bottomBound = bottomBound;
+}
+void Camera::setFocalLength(double focalLength)
+{
+    this->focalLength = focalLength;
 };
 
 Ray ParallelOrthographicCamera::computeViewingRay(int pixelIndexX, int pixelIndexY) const
@@ -120,18 +124,13 @@ PerspectiveCamera::PerspectiveCamera(){};
 PerspectiveCamera::PerspectiveCamera(Vector3 viewPoint, Vector3 u, Vector3 v, Vector3 w, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound, double focalLength)
     : Camera(viewPoint, u, v, w, resolutionX, resolutionY, leftBound, rightBound, topBound, bottomBound)
 {
-    this->focalLength = focalLength;
+    this->setFocalLength(focalLength);
 };
 
 PerspectiveCamera::PerspectiveCamera(Vector3 viewPoint, Vector3 viewingDirection, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound, double focalLength)
     : Camera(viewPoint, viewingDirection, resolutionX, resolutionY, leftBound, rightBound, topBound, bottomBound)
 {
-    this->focalLength = focalLength;
-};
-
-void PerspectiveCamera::setFocalLength(double focalLength)
-{
-    this->focalLength = focalLength;
+    this->setFocalLength(focalLength);
 };
 
 Ray PerspectiveCamera::computeViewingRay(int pixelIndexX, int pixelIndexY) const

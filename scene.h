@@ -17,6 +17,10 @@ public:
 
     void setCamera(std::unique_ptr<Camera>);
     void setSurface(std::shared_ptr<Surface>);
+
+    Camera &getCamera() const;
+    Surface &getSurface() const;
+
     void addLightSource(std::unique_ptr<LightSource> lightSource);
 
     virtual void render() = 0;

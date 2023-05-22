@@ -36,6 +36,16 @@ void Scene::setSurface(std::shared_ptr<Surface> surface)
     this->surface = std::move(surface);
 }
 
+Camera &Scene::getCamera() const
+{
+    return *this->camera;
+}
+
+Surface &Scene::getSurface() const
+{
+    return *this->surface;
+}
+
 void Scene::addLightSource(std::unique_ptr<LightSource> lightSource)
 {
     this->lightSources.push_back(std::move(lightSource));
