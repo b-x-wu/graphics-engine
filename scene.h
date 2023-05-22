@@ -22,6 +22,7 @@ public:
     Surface &getSurface() const;
 
     void addLightSource(std::unique_ptr<LightSource> lightSource);
+    void removeLightSource(size_t idx);
 
     virtual void render() = 0;
     virtual std::string computePixelArray() const = 0;

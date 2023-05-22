@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <assert.h>
+
 #include "scene.h"
 #include "camera.h"
 #include "surface.h"
@@ -49,6 +51,14 @@ Surface &Scene::getSurface() const
 void Scene::addLightSource(std::unique_ptr<LightSource> lightSource)
 {
     this->lightSources.push_back(std::move(lightSource));
+}
+
+void Scene::removeLightSource(size_t idx)
+{
+    assert (idx >= 0 && idx < this->lightSources.size());
+    auto it = this->lightSources.begin();
+    std::advance(it, idx);
+    this->lightSources.erase(it);
 }
 
 void Scene::exportToFile(std::string filename) const
