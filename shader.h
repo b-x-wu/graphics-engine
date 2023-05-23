@@ -10,6 +10,7 @@
 class Shader
 {
 public:
+    virtual ~Shader() = default;
     virtual Util::Color computeColor(
         const std::vector<std::reference_wrapper<LightSource>> &lightSources,
         Math::Ray viewRay,

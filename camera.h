@@ -11,6 +11,7 @@ public:
     Camera(Math::Vector3 viewPoint, Math::Vector3 u, Math::Vector3 v, Math::Vector3 w, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound);
     // places camera at viewPoint and orients it facing the viewing direction with v pointing up
     Camera(Math::Vector3 viewPoint, Math::Vector3 viewingDirection, int resolutionX, int resolutionY, double leftBound, double rightBound, double topBound, double bottomBound);
+    virtual ~Camera() = default;
 
     int getResolutionX() const;
     int getResolutionY() const;

@@ -12,6 +12,7 @@ public:
     LightSource();
     LightSource(double intensity);
     LightSource(double intensity, Util::Color color);
+    virtual ~LightSource() = default;
 
     double getIntensity() const;
 

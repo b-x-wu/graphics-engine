@@ -18,17 +18,17 @@ const double EPSILON = 0.001;
 
 Scene::Scene()
 {
-    this->camera = std::unique_ptr<Camera>(new ParallelOrthographicCamera());
+    this->camera = std::shared_ptr<Camera>(new ParallelOrthographicCamera());
     this->lightSources = std::vector<std::reference_wrapper<LightSource>>();
 }
 
-Scene::Scene(std::unique_ptr<Camera> camera)
+Scene::Scene(std::shared_ptr<Camera> camera)
 {
     this->camera = std::move(camera);
     this->lightSources = std::vector<std::reference_wrapper<LightSource>>();
 };
 
-void Scene::setCamera(std::unique_ptr<Camera> camera)
+void Scene::setCamera(std::shared_ptr<Camera> camera)
 {
     this->camera = std::move(camera);
 };
@@ -38,19 +38,15 @@ void Scene::setSurface(std::shared_ptr<Surface> surface)
     this->surface = std::move(surface);
 }
 
-Camera &Scene::getCamera() const
-{
-    return *this->camera;
-}
-
-Surface &Scene::getSurface() const
-{
-    return *this->surface;
-}
-
 void Scene::addLightSource(LightSource& lightSource)
 {
     this->lightSources.push_back(lightSource);
+}
+
+LightSource &Scene::getLightSource(size_t idx)
+{
+    assert (idx >= 0 && idx < this->lightSources.size());
+    return this->lightSources.at(idx);
 }
 
 void Scene::removeLightSource(size_t idx)
@@ -125,7 +121,7 @@ GrayscaleScene::GrayscaleScene()
     this->initializeBitmap();
 };
 
-GrayscaleScene::GrayscaleScene(std::unique_ptr<Camera> camera): Scene(std::move(camera))
+GrayscaleScene::GrayscaleScene(std::shared_ptr<Camera> camera): Scene(std::move(camera))
 {
     this->initializeBitmap();
 };
@@ -135,7 +131,7 @@ void GrayscaleScene::initializeBitmap()
     this->bitmap = std::vector<std::vector<uint8_t>>(this->camera->getResolutionY(), std::vector<uint8_t>(this->camera->getResolutionX(), 0));
 }
 
-void GrayscaleScene::setCamera(std::unique_ptr<Camera> camera)
+void GrayscaleScene::setCamera(std::shared_ptr<Camera> camera)
 {
     Scene::setCamera(std::move(camera));
     this->initializeBitmap();
@@ -144,6 +140,11 @@ void GrayscaleScene::setCamera(std::unique_ptr<Camera> camera)
 void GrayscaleScene::setBackgroundColor(uint8_t backgroundColor)
 {
     this->backgroundColor = backgroundColor;
+}
+
+std::vector<std::vector<uint8_t>> GrayscaleScene::getBitmap() const
+{
+    return this->bitmap;
 }
 
 uint8_t GrayscaleScene::computeValueAtPixelIndex(int pixelIndexX, int pixelIndexY) const
@@ -185,7 +186,7 @@ std::string GrayscaleScene::computePixelArray() const
 
 RGBScene::RGBScene() {};
 
-RGBScene::RGBScene(std::unique_ptr<Camera> camera)
+RGBScene::RGBScene(std::shared_ptr<Camera> camera)
     : Scene(std::move(camera)) {}
 
 void RGBScene::initializeBitmap()
@@ -194,7 +195,7 @@ void RGBScene::initializeBitmap()
         this->camera->getResolutionY(), std::vector<Util::Color>(this->camera->getResolutionX(), { 0, 0, 0 })
     );
 }
-void RGBScene::setCamera(std::unique_ptr<Camera> camera)
+void RGBScene::setCamera(std::shared_ptr<Camera> camera)
 {
     this->camera = std::move(camera);
     this->initializeBitmap();
@@ -202,6 +203,11 @@ void RGBScene::setCamera(std::unique_ptr<Camera> camera)
 void RGBScene::setBackgroundColor(Util::Color backgroundColor)
 {
     this->backgroundColor = backgroundColor;
+}
+
+std::vector<std::vector<Util::Color>> RGBScene::getBitmap() const
+{
+    return this->bitmap;
 }
 
 void RGBScene::render()

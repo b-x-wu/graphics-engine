@@ -177,7 +177,7 @@ int testRGBScene()
     sphere1->setMaterial(std::move(sphereMaterial1));
 
     std::unique_ptr<Sphere> sphere2(new Sphere(3, { 15, 5, 3 }));
-    std::unique_ptr<Shader> sphereMaterial2(new StandardShader(0.2, { 0, 0, 255 }, 10, { 0, 0, 255 }, { 255, 255, 255 }));
+    std::unique_ptr<Shader> sphereMaterial2(new StandardShader(0.2, { 0, 0, 255 }, 10, { 255, 0, 0 }, { 255, 255, 255 }));
     sphere2->setMaterial(std::move(sphereMaterial2));
 
     std::unique_ptr<GroupSurface> plane(new GroupSurface());

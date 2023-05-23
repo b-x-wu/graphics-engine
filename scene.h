@@ -13,15 +13,15 @@ class Scene
 {
 public:
     Scene(); // by default uses a parallel orthographic camera
-    Scene(std::unique_ptr<Camera> camera);
+    Scene(std::shared_ptr<Camera> camera);
 
-    void setCamera(std::unique_ptr<Camera>);
+    virtual ~Scene() = default;
+
+    void setCamera(std::shared_ptr<Camera>);
     void setSurface(std::shared_ptr<Surface>);
 
-    Camera &getCamera() const;
-    Surface &getSurface() const;
-
     void addLightSource(LightSource& lightSource);
+    LightSource& getLightSource(size_t idx);
     void removeLightSource(size_t idx);
 
     virtual void render() = 0;
@@ -30,7 +30,7 @@ public:
 
 protected:
     std::shared_ptr<Surface> surface;
-    std::unique_ptr<Camera> camera;
+    std::shared_ptr<Camera> camera;
     std::vector<std::reference_wrapper<LightSource>> lightSources;
 };
 
@@ -40,12 +40,14 @@ public:
     static uint8_t colorToGrayscale(Util::Color color);
 
     GrayscaleScene();
-    GrayscaleScene(std::unique_ptr<Camera> camera);
+    GrayscaleScene(std::shared_ptr<Camera> camera);
 
     void initializeBitmap();
 
-    void setCamera(std::unique_ptr<Camera> camera);
+    void setCamera(std::shared_ptr<Camera> camera);
     void setBackgroundColor(uint8_t backgroundColor);
+
+    std::vector<std::vector<uint8_t>> getBitmap() const;
 
     void render(); // updates the bitmap. note bitmap(0,0) is at the bottom left of the frame
     std::string computePixelArray() const;
@@ -60,12 +62,14 @@ class RGBScene : public Scene
 {
 public:
     RGBScene();
-    RGBScene(std::unique_ptr<Camera> camera);
+    RGBScene(std::shared_ptr<Camera> camera);
 
     void initializeBitmap();
 
-    void setCamera(std::unique_ptr<Camera> camera);
+    void setCamera(std::shared_ptr<Camera> camera);
     void setBackgroundColor(Util::Color backgroundColor);
+
+    std::vector<std::vector<Util::Color>> getBitmap() const;
 
     void render();
     std::string computePixelArray() const;

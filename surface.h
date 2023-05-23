@@ -11,6 +11,7 @@
 class Surface : public Renderable
 {
 public:
+    virtual ~Surface() = default;
     void setMaterial(std::unique_ptr<Shader> shader);
 
     virtual Util::Color computeColor(
