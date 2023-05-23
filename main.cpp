@@ -3,6 +3,7 @@
 #include <cmath>
 #include <memory>
 #include <unistd.h>
+#include <emscripten/bind.h>
 
 #include "math.h"
 #include "camera.h"
@@ -12,6 +13,7 @@
 #include "lightSource.h"
 
 using namespace Math;
+using namespace emscripten;
 
 int testMath()
 {
@@ -230,8 +232,76 @@ int main()
 {
     // testMath();
     // testGrayscaleScene();
-    testRGBScene();
+    // testRGBScene();
     // chapter2TestRender();
 
     return 0;
+}
+
+EMSCRIPTEN_BINDINGS(graphics_module)
+{
+    class_<RGBScene>("RGBScene")
+        .constructor<>()
+        .function("setCamera", &RGBScene::setCamera)
+        .function("setSurface", &RGBScene::setSurface)
+        .function("setBackgroundColor", &RGBScene::setBackgroundColor)
+        .function("addLightSource", &RGBScene::addLightSource)
+        .function("removeLightSource", &RGBScene::removeLightSource)
+        .function("getBitmap", &RGBScene::getBitmap)
+        .function("render", &RGBScene::render);
+
+    class_<PerspectiveCamera>("PerspectiveCamera")
+        .constructor<>()
+        .function("setResolution", &PerspectiveCamera::setResolution)
+        .function("setOrigin", &PerspectiveCamera::setOrigin)
+        .function("setOrientation", select_overload<void(Vector3)>(&PerspectiveCamera::setOrientation))
+        .function("setBounds", &PerspectiveCamera::setBounds)
+        .function("setFocalLength", &PerspectiveCamera::setFocalLength);
+
+    class_<Sphere>("Sphere")
+        .constructor<>()
+        .function("setRadius", &Sphere::setRadius)
+        .function("setCenter", &Sphere::setCenter)
+        .function("setMaterial", &Sphere::setMaterial);
+
+    class_<Triangle>("Triangle")
+        .constructor<>()
+        .function("setVertices", &Triangle::setVertices)
+        .function("setMaterial", &Triangle::setMaterial);
+
+    class_<GroupSurface>("GroupSurface")
+        .constructor<>()
+        .function("addSurface", &GroupSurface::addSurface)
+        .function("removeSurface", &GroupSurface::removeSurface)
+        .function("setMaterial", &GroupSurface::setMaterial);
+
+    class_<UnidirectionalLightSource>("UnidirectionalLightSource")
+        .constructor<>()
+        .function("setDirection", &UnidirectionalLightSource::setDirection)
+        .function("setIntensity", &UnidirectionalLightSource::setIntensity);
+
+    class_<PointLightSource>("PointLightSource")
+        .constructor<>()
+        .function("setPoint", &PointLightSource::setPoint)
+        .function("setIntensity", &PointLightSource::setIntensity);
+
+    class_<StandardShader>("StandardShader")
+        .constructor<>()
+        .function("setAmbientIntensity", &StandardShader::setAmbientIntensity)
+        .function("setPhongExponent", &StandardShader::setPhongExponent)
+        .function("setSurfaceColor", &StandardShader::setSurfaceColor)
+        .function("setSpecularColor", &StandardShader::setSpecularColor)
+        .function("setAmbientColor", &StandardShader::setAmbientColor);
+
+    class_<Vector3>("Vector3")
+        .constructor<double, double, double>()
+        .constructor<Vector3 const&>()
+        .function("getX", &Vector3::getX)
+        .function("getY", &Vector3::getY)
+        .function("getZ", &Vector3::getZ);
+    
+    value_object<Util::Color>("Color")
+        .field("red", &Util::Color::red)
+        .field("green", &Util::Color::green)
+        .field("blue", &Util::Color::blue);
 }

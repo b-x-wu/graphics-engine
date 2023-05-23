@@ -74,6 +74,7 @@ public:
     GroupSurface();
 
     void addSurface(std::unique_ptr<Surface> surface);
+    void removeSurface(size_t idx);
     
     Util::Color computeColor(const std::vector<std::reference_wrapper<LightSource>> &lightSources, Math::Ray viewRay, std::shared_ptr<Renderable> surface, std::shared_ptr<Util::HitRecord> hitRecord) const;
     

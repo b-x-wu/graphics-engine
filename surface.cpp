@@ -2,6 +2,7 @@
 #include "surface.h"
 #include "util.h"
 #include "shader.h"
+#include <assert.h>
 #include <iostream>
 #include <algorithm>
 
@@ -210,6 +211,14 @@ void GroupSurface::addSurface(std::unique_ptr<Surface> surface)
         std::max(this->maxBound.getZ(), surface->boundingBox().max.getZ())
     };
     this->surfaces.push_back(std::move(surface));
+}
+
+void GroupSurface::removeSurface(size_t idx)
+{
+    assert (idx >= 0 && idx < this->surfaces.size());
+    auto it = this->surfaces.begin();
+    std::advance(it, idx);
+    this->surfaces.erase(it);
 }
 
 bool GroupSurface::hit(Math::Ray ray, double t0, double t1, std::shared_ptr<Util::HitRecord> & hitRecord) const

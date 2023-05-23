@@ -2,7 +2,6 @@
 #include "math.h"
 #include <iostream>
 #include <assert.h>
-#include <emscripten/bind.h>
 
 using namespace Math;
 
