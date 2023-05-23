@@ -1,3 +1,5 @@
 /.vscode
 *.exe
 /*.bmp
+/*.js
+/*.wasm
