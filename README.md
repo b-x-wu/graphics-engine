@@ -15,3 +15,5 @@ Current command to create the WASM binaries:
 ```
 em++ -lembind main.cpp camera.cpp lightSource.cpp math.cpp scene.cpp shader.cpp surface.cpp -s MODULARIZE=1 -sNO_DISABLE_EXCEPTION_CATCHING --no-entry -s WASM=1 -s EXPORT_NAME="GRAPHICS_ENGINE" -s ENVIRONMENT="web" -o graphics_engine.js -sALLOW_MEMORY_GROWTH -O2 --profiling-funcs -g
 ```
+
+Have a look at [this article](https://blog.esciencecenter.nl/using-c-in-a-web-app-with-webassembly-efd78c08469).
